@@ -13,6 +13,7 @@ type IDirectusObject interface {
 	Diff(old IDirectusObject) map[string]interface{}
 	Track() []IDirectusObject
 	GetId() string
+	CollectionName() string
 }
 
 type CheckEvents struct {
@@ -95,9 +96,9 @@ func (cf CheckEvents) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf CheckEvents) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.Check != nil {
+		trakingList = append(trakingList, cf.Check)
 		trakingList = append(trakingList, cf.Check.Track()...)
 	}
 
@@ -106,6 +107,10 @@ func (cf CheckEvents) Track() []IDirectusObject {
 
 func (cf CheckEvents) GetId() string {
 	return cf.Id.String()
+}
+
+func (cf CheckEvents) CollectionName() string {
+	return "CheckEvents"
 }
 
 type CheckMessages struct {
@@ -200,16 +205,18 @@ func (cf CheckMessages) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf CheckMessages) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.Check != nil {
+		trakingList = append(trakingList, cf.Check)
 		trakingList = append(trakingList, cf.Check.Track()...)
 	}
 
 	if cf.Fromplayer != nil {
+		trakingList = append(trakingList, cf.Fromplayer)
 		trakingList = append(trakingList, cf.Fromplayer.Track()...)
 	}
 	if cf.Fromuser != nil {
+		trakingList = append(trakingList, cf.Fromuser)
 		trakingList = append(trakingList, cf.Fromuser.Track()...)
 	}
 
@@ -218,6 +225,10 @@ func (cf CheckMessages) Track() []IDirectusObject {
 
 func (cf CheckMessages) GetId() string {
 	return cf.Id.String()
+}
+
+func (cf CheckMessages) CollectionName() string {
+	return "CheckMessages"
 }
 
 type DirectusActivity struct {
@@ -394,7 +405,6 @@ func (cf DirectusActivity) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf DirectusActivity) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.Revisions != nil {
 		for _, iter := range cf.Revisions {
@@ -403,6 +413,7 @@ func (cf DirectusActivity) Track() []IDirectusObject {
 	}
 
 	if cf.User != nil {
+		trakingList = append(trakingList, cf.User)
 		trakingList = append(trakingList, cf.User.Track()...)
 	}
 
@@ -411,6 +422,10 @@ func (cf DirectusActivity) Track() []IDirectusObject {
 
 func (cf DirectusActivity) GetId() string {
 	return fmt.Sprintf("%d", cf.Id)
+}
+
+func (cf DirectusActivity) CollectionName() string {
+	return "directus_activity"
 }
 
 type DirectusDashboards struct {
@@ -550,7 +565,6 @@ func (cf DirectusDashboards) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf DirectusDashboards) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.Panels != nil {
 		for _, iter := range cf.Panels {
@@ -559,6 +573,7 @@ func (cf DirectusDashboards) Track() []IDirectusObject {
 	}
 
 	if cf.UserCreated != nil {
+		trakingList = append(trakingList, cf.UserCreated)
 		trakingList = append(trakingList, cf.UserCreated.Track()...)
 	}
 	return trakingList
@@ -566,6 +581,10 @@ func (cf DirectusDashboards) Track() []IDirectusObject {
 
 func (cf DirectusDashboards) GetId() string {
 	return cf.Id.String()
+}
+
+func (cf DirectusDashboards) CollectionName() string {
+	return "directus_dashboards"
 }
 
 type DirectusFields struct {
@@ -837,9 +856,9 @@ func (cf DirectusFields) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf DirectusFields) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.Group != nil {
+		trakingList = append(trakingList, cf.Group)
 		trakingList = append(trakingList, cf.Group.Track()...)
 	}
 
@@ -848,6 +867,10 @@ func (cf DirectusFields) Track() []IDirectusObject {
 
 func (cf DirectusFields) GetId() string {
 	return fmt.Sprintf("%d", cf.Id)
+}
+
+func (cf DirectusFields) CollectionName() string {
+	return "directus_fields"
 }
 
 type DirectusFiles struct {
@@ -1201,17 +1224,19 @@ func (cf DirectusFiles) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf DirectusFiles) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.Folder != nil {
+		trakingList = append(trakingList, cf.Folder)
 		trakingList = append(trakingList, cf.Folder.Track()...)
 	}
 
 	if cf.ModifiedBy != nil {
+		trakingList = append(trakingList, cf.ModifiedBy)
 		trakingList = append(trakingList, cf.ModifiedBy.Track()...)
 	}
 
 	if cf.UploadedBy != nil {
+		trakingList = append(trakingList, cf.UploadedBy)
 		trakingList = append(trakingList, cf.UploadedBy.Track()...)
 	}
 
@@ -1220,6 +1245,10 @@ func (cf DirectusFiles) Track() []IDirectusObject {
 
 func (cf DirectusFiles) GetId() string {
 	return cf.Id.String()
+}
+
+func (cf DirectusFiles) CollectionName() string {
+	return "directus_files"
 }
 
 type DirectusFlows struct {
@@ -1436,9 +1465,9 @@ func (cf DirectusFlows) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf DirectusFlows) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.Operation != nil {
+		trakingList = append(trakingList, cf.Operation)
 		trakingList = append(trakingList, cf.Operation.Track()...)
 	}
 	if cf.Operations != nil {
@@ -1448,6 +1477,7 @@ func (cf DirectusFlows) Track() []IDirectusObject {
 	}
 
 	if cf.UserCreated != nil {
+		trakingList = append(trakingList, cf.UserCreated)
 		trakingList = append(trakingList, cf.UserCreated.Track()...)
 	}
 	return trakingList
@@ -1455,6 +1485,10 @@ func (cf DirectusFlows) Track() []IDirectusObject {
 
 func (cf DirectusFlows) GetId() string {
 	return cf.Id.String()
+}
+
+func (cf DirectusFlows) CollectionName() string {
+	return "directus_flows"
 }
 
 type DirectusFolders struct {
@@ -1515,9 +1549,9 @@ func (cf DirectusFolders) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf DirectusFolders) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.Parent != nil {
+		trakingList = append(trakingList, cf.Parent)
 		trakingList = append(trakingList, cf.Parent.Track()...)
 	}
 	return trakingList
@@ -1525,6 +1559,10 @@ func (cf DirectusFolders) Track() []IDirectusObject {
 
 func (cf DirectusFolders) GetId() string {
 	return cf.Id.String()
+}
+
+func (cf DirectusFolders) CollectionName() string {
+	return "directus_folders"
 }
 
 type DirectusNotifications struct {
@@ -1698,12 +1736,13 @@ func (cf DirectusNotifications) Diff(old IDirectusObject) map[string]interface{}
 }
 func (cf DirectusNotifications) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.Recipient != nil {
+		trakingList = append(trakingList, cf.Recipient)
 		trakingList = append(trakingList, cf.Recipient.Track()...)
 	}
 	if cf.Sender != nil {
+		trakingList = append(trakingList, cf.Sender)
 		trakingList = append(trakingList, cf.Sender.Track()...)
 	}
 
@@ -1712,6 +1751,10 @@ func (cf DirectusNotifications) Track() []IDirectusObject {
 
 func (cf DirectusNotifications) GetId() string {
 	return fmt.Sprintf("%d", cf.Id)
+}
+
+func (cf DirectusNotifications) CollectionName() string {
+	return "directus_notifications"
 }
 
 type DirectusOperations struct {
@@ -1865,20 +1908,23 @@ func (cf DirectusOperations) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf DirectusOperations) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.Flow != nil {
+		trakingList = append(trakingList, cf.Flow)
 		trakingList = append(trakingList, cf.Flow.Track()...)
 	}
 
 	if cf.Reject != nil {
+		trakingList = append(trakingList, cf.Reject)
 		trakingList = append(trakingList, cf.Reject.Track()...)
 	}
 	if cf.Resolve != nil {
+		trakingList = append(trakingList, cf.Resolve)
 		trakingList = append(trakingList, cf.Resolve.Track()...)
 	}
 
 	if cf.UserCreated != nil {
+		trakingList = append(trakingList, cf.UserCreated)
 		trakingList = append(trakingList, cf.UserCreated.Track()...)
 	}
 	return trakingList
@@ -1886,6 +1932,10 @@ func (cf DirectusOperations) Track() []IDirectusObject {
 
 func (cf DirectusOperations) GetId() string {
 	return cf.Id.String()
+}
+
+func (cf DirectusOperations) CollectionName() string {
+	return "directus_operations"
 }
 
 type DirectusPanels struct {
@@ -2107,13 +2157,14 @@ func (cf DirectusPanels) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf DirectusPanels) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.Dashboard != nil {
+		trakingList = append(trakingList, cf.Dashboard)
 		trakingList = append(trakingList, cf.Dashboard.Track()...)
 	}
 
 	if cf.UserCreated != nil {
+		trakingList = append(trakingList, cf.UserCreated)
 		trakingList = append(trakingList, cf.UserCreated.Track()...)
 	}
 
@@ -2122,6 +2173,10 @@ func (cf DirectusPanels) Track() []IDirectusObject {
 
 func (cf DirectusPanels) GetId() string {
 	return cf.Id.String()
+}
+
+func (cf DirectusPanels) CollectionName() string {
+	return "directus_panels"
 }
 
 type DirectusPermissions struct {
@@ -2222,9 +2277,9 @@ func (cf DirectusPermissions) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf DirectusPermissions) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.Role != nil {
+		trakingList = append(trakingList, cf.Role)
 		trakingList = append(trakingList, cf.Role.Track()...)
 	}
 
@@ -2233,6 +2288,10 @@ func (cf DirectusPermissions) Track() []IDirectusObject {
 
 func (cf DirectusPermissions) GetId() string {
 	return fmt.Sprintf("%d", cf.Id)
+}
+
+func (cf DirectusPermissions) CollectionName() string {
+	return "directus_permissions"
 }
 
 type DirectusPresets struct {
@@ -2464,13 +2523,14 @@ func (cf DirectusPresets) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf DirectusPresets) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.Role != nil {
+		trakingList = append(trakingList, cf.Role)
 		trakingList = append(trakingList, cf.Role.Track()...)
 	}
 
 	if cf.User != nil {
+		trakingList = append(trakingList, cf.User)
 		trakingList = append(trakingList, cf.User.Track()...)
 	}
 	return trakingList
@@ -2478,6 +2538,10 @@ func (cf DirectusPresets) Track() []IDirectusObject {
 
 func (cf DirectusPresets) GetId() string {
 	return fmt.Sprintf("%d", cf.Id)
+}
+
+func (cf DirectusPresets) CollectionName() string {
+	return "directus_presets"
 }
 
 type DirectusRelations struct {
@@ -2661,13 +2725,16 @@ func (cf DirectusRelations) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf DirectusRelations) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	return trakingList
 }
 
 func (cf DirectusRelations) GetId() string {
 	return fmt.Sprintf("%d", cf.Id)
+}
+
+func (cf DirectusRelations) CollectionName() string {
+	return "directus_relations"
 }
 
 type DirectusRevisions struct {
@@ -2764,16 +2831,18 @@ func (cf DirectusRevisions) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf DirectusRevisions) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.Activity != nil {
+		trakingList = append(trakingList, cf.Activity)
 		trakingList = append(trakingList, cf.Activity.Track()...)
 	}
 
 	if cf.Parent != nil {
+		trakingList = append(trakingList, cf.Parent)
 		trakingList = append(trakingList, cf.Parent.Track()...)
 	}
 	if cf.Version != nil {
+		trakingList = append(trakingList, cf.Version)
 		trakingList = append(trakingList, cf.Version.Track()...)
 	}
 	return trakingList
@@ -2781,6 +2850,10 @@ func (cf DirectusRevisions) Track() []IDirectusObject {
 
 func (cf DirectusRevisions) GetId() string {
 	return fmt.Sprintf("%d", cf.Id)
+}
+
+func (cf DirectusRevisions) CollectionName() string {
+	return "directus_revisions"
 }
 
 type DirectusRoles struct {
@@ -2903,7 +2976,6 @@ func (cf DirectusRoles) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf DirectusRoles) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.Users != nil {
 		for _, iter := range cf.Users {
@@ -2916,6 +2988,10 @@ func (cf DirectusRoles) Track() []IDirectusObject {
 
 func (cf DirectusRoles) GetId() string {
 	return cf.Id.String()
+}
+
+func (cf DirectusRoles) CollectionName() string {
+	return "directus_roles"
 }
 
 type DirectusSettings struct {
@@ -3364,21 +3440,24 @@ func (cf DirectusSettings) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf DirectusSettings) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.ProjectLogo != nil {
+		trakingList = append(trakingList, cf.ProjectLogo)
 		trakingList = append(trakingList, cf.ProjectLogo.Track()...)
 	}
 
 	if cf.PublicBackground != nil {
+		trakingList = append(trakingList, cf.PublicBackground)
 		trakingList = append(trakingList, cf.PublicBackground.Track()...)
 	}
 
 	if cf.PublicForeground != nil {
+		trakingList = append(trakingList, cf.PublicForeground)
 		trakingList = append(trakingList, cf.PublicForeground.Track()...)
 	}
 
 	if cf.StorageDefaultFolder != nil {
+		trakingList = append(trakingList, cf.StorageDefaultFolder)
 		trakingList = append(trakingList, cf.StorageDefaultFolder.Track()...)
 	}
 
@@ -3387,6 +3466,10 @@ func (cf DirectusSettings) Track() []IDirectusObject {
 
 func (cf DirectusSettings) GetId() string {
 	return fmt.Sprintf("%d", cf.Id)
+}
+
+func (cf DirectusSettings) CollectionName() string {
+	return "directus_settings"
 }
 
 type DirectusShares struct {
@@ -3602,13 +3685,14 @@ func (cf DirectusShares) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf DirectusShares) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.Role != nil {
+		trakingList = append(trakingList, cf.Role)
 		trakingList = append(trakingList, cf.Role.Track()...)
 	}
 
 	if cf.UserCreated != nil {
+		trakingList = append(trakingList, cf.UserCreated)
 		trakingList = append(trakingList, cf.UserCreated.Track()...)
 	}
 	return trakingList
@@ -3616,6 +3700,10 @@ func (cf DirectusShares) Track() []IDirectusObject {
 
 func (cf DirectusShares) GetId() string {
 	return cf.Id.String()
+}
+
+func (cf DirectusShares) CollectionName() string {
+	return "directus_shares"
 }
 
 type DirectusTranslations struct {
@@ -3686,13 +3774,16 @@ func (cf DirectusTranslations) Diff(old IDirectusObject) map[string]interface{} 
 }
 func (cf DirectusTranslations) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	return trakingList
 }
 
 func (cf DirectusTranslations) GetId() string {
 	return cf.Id.String()
+}
+
+func (cf DirectusTranslations) CollectionName() string {
+	return "directus_translations"
 }
 
 type DirectusUsers struct {
@@ -4181,13 +4272,14 @@ func (cf DirectusUsers) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf DirectusUsers) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.Avatar != nil {
+		trakingList = append(trakingList, cf.Avatar)
 		trakingList = append(trakingList, cf.Avatar.Track()...)
 	}
 
 	if cf.Role != nil {
+		trakingList = append(trakingList, cf.Role)
 		trakingList = append(trakingList, cf.Role.Track()...)
 	}
 
@@ -4196,6 +4288,10 @@ func (cf DirectusUsers) Track() []IDirectusObject {
 
 func (cf DirectusUsers) GetId() string {
 	return cf.Id.String()
+}
+
+func (cf DirectusUsers) CollectionName() string {
+	return "directus_users"
 }
 
 type DirectusVersions struct {
@@ -4355,12 +4451,13 @@ func (cf DirectusVersions) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf DirectusVersions) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.UserCreated != nil {
+		trakingList = append(trakingList, cf.UserCreated)
 		trakingList = append(trakingList, cf.UserCreated.Track()...)
 	}
 	if cf.UserUpdated != nil {
+		trakingList = append(trakingList, cf.UserUpdated)
 		trakingList = append(trakingList, cf.UserUpdated.Track()...)
 	}
 	return trakingList
@@ -4368,6 +4465,10 @@ func (cf DirectusVersions) Track() []IDirectusObject {
 
 func (cf DirectusVersions) GetId() string {
 	return cf.Id.String()
+}
+
+func (cf DirectusVersions) CollectionName() string {
+	return "directus_versions"
 }
 
 type DirectusWebhooks struct {
@@ -4486,13 +4587,16 @@ func (cf DirectusWebhooks) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf DirectusWebhooks) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	return trakingList
 }
 
 func (cf DirectusWebhooks) GetId() string {
 	return fmt.Sprintf("%d", cf.Id)
+}
+
+func (cf DirectusWebhooks) CollectionName() string {
+	return "directus_webhooks"
 }
 
 type ExternalFiles struct {
@@ -4603,9 +4707,9 @@ func (cf ExternalFiles) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf ExternalFiles) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.UserCreated != nil {
+		trakingList = append(trakingList, cf.UserCreated)
 		trakingList = append(trakingList, cf.UserCreated.Track()...)
 	}
 	return trakingList
@@ -4613,6 +4717,10 @@ func (cf ExternalFiles) Track() []IDirectusObject {
 
 func (cf ExternalFiles) GetId() string {
 	return cf.Id.String()
+}
+
+func (cf ExternalFiles) CollectionName() string {
+	return "ExternalFiles"
 }
 
 type GameProjects struct {
@@ -4731,7 +4839,6 @@ func (cf GameProjects) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf GameProjects) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.GameServers != nil {
 		for _, iter := range cf.GameServers {
@@ -4740,6 +4847,7 @@ func (cf GameProjects) Track() []IDirectusObject {
 	}
 
 	if cf.UserCreated != nil {
+		trakingList = append(trakingList, cf.UserCreated)
 		trakingList = append(trakingList, cf.UserCreated.Track()...)
 	}
 	return trakingList
@@ -4747,6 +4855,10 @@ func (cf GameProjects) Track() []IDirectusObject {
 
 func (cf GameProjects) GetId() string {
 	return cf.Id.String()
+}
+
+func (cf GameProjects) CollectionName() string {
+	return "GameProjects"
 }
 
 type GameServers struct {
@@ -4899,7 +5011,6 @@ func (cf GameServers) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf GameServers) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.Moderators != nil {
 		for _, iter := range cf.Moderators {
@@ -4908,6 +5019,7 @@ func (cf GameServers) Track() []IDirectusObject {
 	}
 
 	if cf.Project != nil {
+		trakingList = append(trakingList, cf.Project)
 		trakingList = append(trakingList, cf.Project.Track()...)
 	}
 
@@ -4924,6 +5036,7 @@ func (cf GameServers) Track() []IDirectusObject {
 	}
 
 	if cf.UserCreated != nil {
+		trakingList = append(trakingList, cf.UserCreated)
 		trakingList = append(trakingList, cf.UserCreated.Track()...)
 	}
 	return trakingList
@@ -4931,6 +5044,10 @@ func (cf GameServers) Track() []IDirectusObject {
 
 func (cf GameServers) GetId() string {
 	return cf.Id.String()
+}
+
+func (cf GameServers) CollectionName() string {
+	return "GameServers"
 }
 
 type GameServersModerators struct {
@@ -4989,12 +5106,13 @@ func (cf GameServersModerators) Diff(old IDirectusObject) map[string]interface{}
 }
 func (cf GameServersModerators) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.DirectusUsersId != nil {
+		trakingList = append(trakingList, cf.DirectusUsersId)
 		trakingList = append(trakingList, cf.DirectusUsersId.Track()...)
 	}
 	if cf.GameServersId != nil {
+		trakingList = append(trakingList, cf.GameServersId)
 		trakingList = append(trakingList, cf.GameServersId.Track()...)
 	}
 
@@ -5003,6 +5121,10 @@ func (cf GameServersModerators) Track() []IDirectusObject {
 
 func (cf GameServersModerators) GetId() string {
 	return fmt.Sprintf("%d", cf.Id)
+}
+
+func (cf GameServersModerators) CollectionName() string {
+	return "GameServers_Moderators"
 }
 
 type KnownIps struct {
@@ -5094,7 +5216,6 @@ func (cf KnownIps) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf KnownIps) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.SteamUsers != nil {
 		for _, iter := range cf.SteamUsers {
@@ -5107,6 +5228,10 @@ func (cf KnownIps) Track() []IDirectusObject {
 
 func (cf KnownIps) GetId() string {
 	return cf.Id.String()
+}
+
+func (cf KnownIps) CollectionName() string {
+	return "KnownIps"
 }
 
 type PlayerBans struct {
@@ -5256,7 +5381,6 @@ func (cf PlayerBans) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf PlayerBans) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.Files != nil {
 		for _, iter := range cf.Files {
@@ -5265,20 +5389,25 @@ func (cf PlayerBans) Track() []IDirectusObject {
 	}
 
 	if cf.Project != nil {
+		trakingList = append(trakingList, cf.Project)
 		trakingList = append(trakingList, cf.Project.Track()...)
 	}
 
 	if cf.TargetIp != nil {
+		trakingList = append(trakingList, cf.TargetIp)
 		trakingList = append(trakingList, cf.TargetIp.Track()...)
 	}
 	if cf.TargetPlayer != nil {
+		trakingList = append(trakingList, cf.TargetPlayer)
 		trakingList = append(trakingList, cf.TargetPlayer.Track()...)
 	}
 	if cf.TargetSteam != nil {
+		trakingList = append(trakingList, cf.TargetSteam)
 		trakingList = append(trakingList, cf.TargetSteam.Track()...)
 	}
 
 	if cf.UserCreated != nil {
+		trakingList = append(trakingList, cf.UserCreated)
 		trakingList = append(trakingList, cf.UserCreated.Track()...)
 	}
 	return trakingList
@@ -5286,6 +5415,10 @@ func (cf PlayerBans) Track() []IDirectusObject {
 
 func (cf PlayerBans) GetId() string {
 	return cf.Id.String()
+}
+
+func (cf PlayerBans) CollectionName() string {
+	return "PlayerBans"
 }
 
 type PlayerBansExternalFiles struct {
@@ -5344,13 +5477,14 @@ func (cf PlayerBansExternalFiles) Diff(old IDirectusObject) map[string]interface
 }
 func (cf PlayerBansExternalFiles) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.ExternalFilesId != nil {
+		trakingList = append(trakingList, cf.ExternalFilesId)
 		trakingList = append(trakingList, cf.ExternalFilesId.Track()...)
 	}
 
 	if cf.PlayerBansId != nil {
+		trakingList = append(trakingList, cf.PlayerBansId)
 		trakingList = append(trakingList, cf.PlayerBansId.Track()...)
 	}
 	return trakingList
@@ -5358,6 +5492,10 @@ func (cf PlayerBansExternalFiles) Track() []IDirectusObject {
 
 func (cf PlayerBansExternalFiles) GetId() string {
 	return fmt.Sprintf("%d", cf.Id)
+}
+
+func (cf PlayerBansExternalFiles) CollectionName() string {
+	return "PlayerBans_ExternalFiles"
 }
 
 type PlayerChecks struct {
@@ -5444,15 +5582,17 @@ func (cf PlayerChecks) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf PlayerChecks) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.Inspector != nil {
+		trakingList = append(trakingList, cf.Inspector)
 		trakingList = append(trakingList, cf.Inspector.Track()...)
 	}
 	if cf.Target != nil {
+		trakingList = append(trakingList, cf.Target)
 		trakingList = append(trakingList, cf.Target.Track()...)
 	}
 	if cf.UserCreated != nil {
+		trakingList = append(trakingList, cf.UserCreated)
 		trakingList = append(trakingList, cf.UserCreated.Track()...)
 	}
 	return trakingList
@@ -5460,6 +5600,10 @@ func (cf PlayerChecks) Track() []IDirectusObject {
 
 func (cf PlayerChecks) GetId() string {
 	return cf.Id.String()
+}
+
+func (cf PlayerChecks) CollectionName() string {
+	return "PlayerChecks"
 }
 
 type PlayerEvents struct {
@@ -5542,9 +5686,9 @@ func (cf PlayerEvents) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf PlayerEvents) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.Player != nil {
+		trakingList = append(trakingList, cf.Player)
 		trakingList = append(trakingList, cf.Player.Track()...)
 	}
 	return trakingList
@@ -5552,6 +5696,10 @@ func (cf PlayerEvents) Track() []IDirectusObject {
 
 func (cf PlayerEvents) GetId() string {
 	return cf.Id.String()
+}
+
+func (cf PlayerEvents) CollectionName() string {
+	return "PlayerEvents"
 }
 
 type PlayerReports struct {
@@ -5653,12 +5801,13 @@ func (cf PlayerReports) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf PlayerReports) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.Reporter != nil {
+		trakingList = append(trakingList, cf.Reporter)
 		trakingList = append(trakingList, cf.Reporter.Track()...)
 	}
 	if cf.Target != nil {
+		trakingList = append(trakingList, cf.Target)
 		trakingList = append(trakingList, cf.Target.Track()...)
 	}
 	return trakingList
@@ -5666,6 +5815,10 @@ func (cf PlayerReports) Track() []IDirectusObject {
 
 func (cf PlayerReports) GetId() string {
 	return cf.Id.String()
+}
+
+func (cf PlayerReports) CollectionName() string {
+	return "PlayerReports"
 }
 
 type ServerChatMessages struct {
@@ -5774,12 +5927,13 @@ func (cf ServerChatMessages) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf ServerChatMessages) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.Sender != nil {
+		trakingList = append(trakingList, cf.Sender)
 		trakingList = append(trakingList, cf.Sender.Track()...)
 	}
 	if cf.Server != nil {
+		trakingList = append(trakingList, cf.Server)
 		trakingList = append(trakingList, cf.Server.Track()...)
 	}
 	return trakingList
@@ -5787,6 +5941,10 @@ func (cf ServerChatMessages) Track() []IDirectusObject {
 
 func (cf ServerChatMessages) GetId() string {
 	return cf.Id.String()
+}
+
+func (cf ServerChatMessages) CollectionName() string {
+	return "ServerChatMessages"
 }
 
 type ServerPlayers struct {
@@ -5910,7 +6068,6 @@ func (cf ServerPlayers) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf ServerPlayers) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.PlayerChecks != nil {
 		for _, iter := range cf.PlayerChecks {
@@ -5937,6 +6094,7 @@ func (cf ServerPlayers) Track() []IDirectusObject {
 	}
 
 	if cf.Server != nil {
+		trakingList = append(trakingList, cf.Server)
 		trakingList = append(trakingList, cf.Server.Track()...)
 	}
 	if cf.ServerChatMessages != nil {
@@ -5946,6 +6104,7 @@ func (cf ServerPlayers) Track() []IDirectusObject {
 	}
 
 	if cf.Steamuser != nil {
+		trakingList = append(trakingList, cf.Steamuser)
 		trakingList = append(trakingList, cf.Steamuser.Track()...)
 	}
 	return trakingList
@@ -5953,6 +6112,10 @@ func (cf ServerPlayers) Track() []IDirectusObject {
 
 func (cf ServerPlayers) GetId() string {
 	return cf.Id.String()
+}
+
+func (cf ServerPlayers) CollectionName() string {
+	return "ServerPlayers"
 }
 
 type SteamUsers struct {
@@ -6083,13 +6246,14 @@ func (cf SteamUsers) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf SteamUsers) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	if cf.Avatar != nil {
+		trakingList = append(trakingList, cf.Avatar)
 		trakingList = append(trakingList, cf.Avatar.Track()...)
 	}
 
 	if cf.Ip != nil {
+		trakingList = append(trakingList, cf.Ip)
 		trakingList = append(trakingList, cf.Ip.Track()...)
 	}
 
@@ -6100,6 +6264,7 @@ func (cf SteamUsers) Track() []IDirectusObject {
 	}
 
 	if cf.UserCreated != nil {
+		trakingList = append(trakingList, cf.UserCreated)
 		trakingList = append(trakingList, cf.UserCreated.Track()...)
 	}
 	return trakingList
@@ -6107,6 +6272,10 @@ func (cf SteamUsers) Track() []IDirectusObject {
 
 func (cf SteamUsers) GetId() string {
 	return cf.Id.String()
+}
+
+func (cf SteamUsers) CollectionName() string {
+	return "SteamUsers"
 }
 
 type Test struct {
@@ -6153,11 +6322,14 @@ func (cf Test) Diff(old IDirectusObject) map[string]interface{} {
 }
 func (cf Test) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-	trakingList = append(trakingList, &cf)
 
 	return trakingList
 }
 
 func (cf Test) GetId() string {
 	return cf.Id.String()
+}
+
+func (cf Test) CollectionName() string {
+	return "test"
 }

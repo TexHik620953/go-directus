@@ -4,28 +4,24 @@ import (
 	"fmt"
 	"go-directus/directus"
 	"log"
-
-	"github.com/google/uuid"
 )
 
 func main() {
-	directusApi, err := directus.New("http://localhost:8055")
+	directusApi, err := directus.New("http://localhost:8055", "hH7xIXYzonjs_HUpdhNFLgKuwYIbWkPe")
 	if err != nil {
 		log.Fatal(err)
 	}
-	gameServers := directus.NewDirectusCollection[uuid.UUID, directus.GameServers](directusApi, "GameServers", "hH7xIXYzonjs_HUpdhNFLgKuwYIbWkPe")
 
-	//id := "00996200-b4d6-4fcf-b6ac-ad6ce25139cc"
-	server, err := gameServers.ReadAll().
-		Where(`name == "123"`).
+	server, err := directusApi.GameServersCollectionAccessor.ReadAll().
+		Where(`name == "!23"`).
 		Include("*, *.*").
 		First()
 	if err != nil {
 		log.Fatal(err)
 	}
-	*server.Address = "123"
+	*server.Project.Annotation = "Srakotan"
 
-	err = gameServers.SaveChanges()
+	err = directusApi.SaveChanges()
 	if err != nil {
 		log.Fatal(err)
 	}
