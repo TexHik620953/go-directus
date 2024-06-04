@@ -14,6 +14,7 @@ type IDirectusObject interface {
 	Track() []IDirectusObject
 	GetId() string
 	CollectionName() string
+	Map() map[string]interface{}
 }
 
 type CheckEvents struct {
@@ -49,7 +50,6 @@ func (cf *CheckEvents) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf CheckEvents) DeepCopy() IDirectusObject {
 	new_obj := &CheckEvents{}
 	if cf.Check != nil {
@@ -94,6 +94,18 @@ func (cf CheckEvents) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf CheckEvents) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["date_created"] = cf.DateCreated
+	mp["event"] = cf.Event
+	mp["id"] = cf.Id
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf CheckEvents) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -104,11 +116,9 @@ func (cf CheckEvents) Track() []IDirectusObject {
 
 	return trakingList
 }
-
 func (cf CheckEvents) GetId() string {
 	return cf.Id.String()
 }
-
 func (cf CheckEvents) CollectionName() string {
 	return "CheckEvents"
 }
@@ -152,7 +162,6 @@ func (cf *CheckMessages) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf CheckMessages) DeepCopy() IDirectusObject {
 	new_obj := &CheckMessages{}
 	if cf.Check != nil {
@@ -203,6 +212,19 @@ func (cf CheckMessages) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf CheckMessages) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["date_created"] = cf.DateCreated
+
+	mp["id"] = cf.Id
+	mp["message"] = cf.Message
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf CheckMessages) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -222,11 +244,9 @@ func (cf CheckMessages) Track() []IDirectusObject {
 
 	return trakingList
 }
-
 func (cf CheckMessages) GetId() string {
 	return cf.Id.String()
 }
-
 func (cf CheckMessages) CollectionName() string {
 	return "CheckMessages"
 }
@@ -285,7 +305,6 @@ func (cf *DirectusActivity) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf DirectusActivity) DeepCopy() IDirectusObject {
 	new_obj := &DirectusActivity{}
 	new_obj.Action = cf.Action
@@ -403,6 +422,26 @@ func (cf DirectusActivity) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf DirectusActivity) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["action"] = cf.Action
+	mp["collection"] = cf.Collection
+	mp["comment"] = cf.Comment
+	mp["id"] = cf.Id
+	mp["ip"] = cf.Ip
+	mp["item"] = cf.Item
+	mp["origin"] = cf.Origin
+
+	mp["timestamp"] = cf.Timestamp
+
+	mp["user_agent"] = cf.UserAgent
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf DirectusActivity) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -419,11 +458,9 @@ func (cf DirectusActivity) Track() []IDirectusObject {
 
 	return trakingList
 }
-
 func (cf DirectusActivity) GetId() string {
 	return fmt.Sprintf("%d", cf.Id)
 }
-
 func (cf DirectusActivity) CollectionName() string {
 	return "directus_activity"
 }
@@ -473,7 +510,6 @@ func (cf *DirectusDashboards) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf DirectusDashboards) DeepCopy() IDirectusObject {
 	new_obj := &DirectusDashboards{}
 	if cf.Color != nil {
@@ -563,6 +599,21 @@ func (cf DirectusDashboards) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf DirectusDashboards) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["color"] = cf.Color
+	mp["date_created"] = cf.DateCreated
+	mp["icon"] = cf.Icon
+	mp["id"] = cf.Id
+	mp["name"] = cf.Name
+	mp["note"] = cf.Note
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf DirectusDashboards) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -578,11 +629,9 @@ func (cf DirectusDashboards) Track() []IDirectusObject {
 	}
 	return trakingList
 }
-
 func (cf DirectusDashboards) GetId() string {
 	return cf.Id.String()
 }
-
 func (cf DirectusDashboards) CollectionName() string {
 	return "directus_dashboards"
 }
@@ -662,7 +711,6 @@ func (cf *DirectusFields) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf DirectusFields) DeepCopy() IDirectusObject {
 	new_obj := &DirectusFields{}
 	new_obj.Conditions = cf.Conditions
@@ -854,6 +902,33 @@ func (cf DirectusFields) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf DirectusFields) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["conditions"] = cf.Conditions
+	mp["display"] = cf.Display
+	mp["display_options"] = cf.DisplayOptions
+	mp["field"] = cf.Field
+
+	mp["hidden"] = cf.Hidden
+	mp["id"] = cf.Id
+	mp["interface"] = cf.Interface
+	mp["note"] = cf.Note
+	mp["options"] = cf.Options
+	mp["readonly"] = cf.Readonly
+	mp["required"] = cf.Required
+	mp["sort"] = cf.Sort
+	mp["special"] = cf.Special
+	mp["translations"] = cf.Translations
+	mp["validation"] = cf.Validation
+	mp["validation_message"] = cf.ValidationMessage
+	mp["width"] = cf.Width
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf DirectusFields) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -864,11 +939,9 @@ func (cf DirectusFields) Track() []IDirectusObject {
 
 	return trakingList
 }
-
 func (cf DirectusFields) GetId() string {
 	return fmt.Sprintf("%d", cf.Id)
 }
-
 func (cf DirectusFields) CollectionName() string {
 	return "directus_fields"
 }
@@ -960,7 +1033,6 @@ func (cf *DirectusFiles) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf DirectusFiles) DeepCopy() IDirectusObject {
 	new_obj := &DirectusFiles{}
 	if cf.Charset != nil {
@@ -1222,6 +1294,37 @@ func (cf DirectusFiles) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf DirectusFiles) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["charset"] = cf.Charset
+	mp["description"] = cf.Description
+	mp["duration"] = cf.Duration
+	mp["embed"] = cf.Embed
+	mp["filename_disk"] = cf.FilenameDisk
+	mp["filename_download"] = cf.FilenameDownload
+	mp["filesize"] = cf.Filesize
+
+	mp["height"] = cf.Height
+	mp["id"] = cf.Id
+	mp["location"] = cf.Location
+	mp["metadata"] = cf.Metadata
+
+	mp["modified_on"] = cf.ModifiedOn
+	mp["storage"] = cf.Storage
+	mp["storage_divider"] = cf.StorageDivider
+	mp["tags"] = cf.Tags
+	mp["title"] = cf.Title
+	mp["type"] = cf.Type
+
+	mp["uploaded_on"] = cf.UploadedOn
+	mp["width"] = cf.Width
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf DirectusFiles) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -1242,11 +1345,9 @@ func (cf DirectusFiles) Track() []IDirectusObject {
 
 	return trakingList
 }
-
 func (cf DirectusFiles) GetId() string {
 	return cf.Id.String()
 }
-
 func (cf DirectusFiles) CollectionName() string {
 	return "directus_files"
 }
@@ -1311,7 +1412,6 @@ func (cf *DirectusFlows) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf DirectusFlows) DeepCopy() IDirectusObject {
 	new_obj := &DirectusFlows{}
 	if cf.Accountability != nil {
@@ -1463,6 +1563,26 @@ func (cf DirectusFlows) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf DirectusFlows) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["accountability"] = cf.Accountability
+	mp["color"] = cf.Color
+	mp["date_created"] = cf.DateCreated
+	mp["description"] = cf.Description
+	mp["icon"] = cf.Icon
+	mp["id"] = cf.Id
+	mp["name"] = cf.Name
+
+	mp["options"] = cf.Options
+	mp["status"] = cf.Status
+	mp["trigger"] = cf.Trigger
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf DirectusFlows) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -1482,11 +1602,9 @@ func (cf DirectusFlows) Track() []IDirectusObject {
 	}
 	return trakingList
 }
-
 func (cf DirectusFlows) GetId() string {
 	return cf.Id.String()
 }
-
 func (cf DirectusFlows) CollectionName() string {
 	return "directus_flows"
 }
@@ -1521,7 +1639,6 @@ func (cf *DirectusFolders) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf DirectusFolders) DeepCopy() IDirectusObject {
 	new_obj := &DirectusFolders{}
 	new_obj.Id = cf.Id
@@ -1547,6 +1664,17 @@ func (cf DirectusFolders) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf DirectusFolders) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["id"] = cf.Id
+	mp["name"] = cf.Name
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf DirectusFolders) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -1556,11 +1684,9 @@ func (cf DirectusFolders) Track() []IDirectusObject {
 	}
 	return trakingList
 }
-
 func (cf DirectusFolders) GetId() string {
 	return cf.Id.String()
 }
-
 func (cf DirectusFolders) CollectionName() string {
 	return "directus_folders"
 }
@@ -1613,7 +1739,6 @@ func (cf *DirectusNotifications) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf DirectusNotifications) DeepCopy() IDirectusObject {
 	new_obj := &DirectusNotifications{}
 	if cf.Collection != nil {
@@ -1734,6 +1859,23 @@ func (cf DirectusNotifications) Diff(old IDirectusObject) map[string]interface{}
 	}
 	return diff
 }
+func (cf DirectusNotifications) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["collection"] = cf.Collection
+	mp["id"] = cf.Id
+	mp["item"] = cf.Item
+	mp["message"] = cf.Message
+
+	mp["status"] = cf.Status
+	mp["subject"] = cf.Subject
+	mp["timestamp"] = cf.Timestamp
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf DirectusNotifications) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -1748,11 +1890,9 @@ func (cf DirectusNotifications) Track() []IDirectusObject {
 
 	return trakingList
 }
-
 func (cf DirectusNotifications) GetId() string {
 	return fmt.Sprintf("%d", cf.Id)
 }
-
 func (cf DirectusNotifications) CollectionName() string {
 	return "directus_notifications"
 }
@@ -1814,7 +1954,6 @@ func (cf *DirectusOperations) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf DirectusOperations) DeepCopy() IDirectusObject {
 	new_obj := &DirectusOperations{}
 	if cf.DateCreated != nil {
@@ -1906,6 +2045,25 @@ func (cf DirectusOperations) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf DirectusOperations) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["date_created"] = cf.DateCreated
+
+	mp["id"] = cf.Id
+	mp["key"] = cf.Key
+	mp["name"] = cf.Name
+	mp["options"] = cf.Options
+	mp["position_x"] = cf.PositionX
+	mp["position_y"] = cf.PositionY
+
+	mp["type"] = cf.Type
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf DirectusOperations) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -1929,11 +2087,9 @@ func (cf DirectusOperations) Track() []IDirectusObject {
 	}
 	return trakingList
 }
-
 func (cf DirectusOperations) GetId() string {
 	return cf.Id.String()
 }
-
 func (cf DirectusOperations) CollectionName() string {
 	return "directus_operations"
 }
@@ -2004,7 +2160,6 @@ func (cf *DirectusPanels) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf DirectusPanels) DeepCopy() IDirectusObject {
 	new_obj := &DirectusPanels{}
 	if cf.Color != nil {
@@ -2155,6 +2310,30 @@ func (cf DirectusPanels) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf DirectusPanels) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["color"] = cf.Color
+
+	mp["date_created"] = cf.DateCreated
+	mp["height"] = cf.Height
+	mp["icon"] = cf.Icon
+	mp["id"] = cf.Id
+	mp["name"] = cf.Name
+	mp["note"] = cf.Note
+	mp["options"] = cf.Options
+	mp["position_x"] = cf.PositionX
+	mp["position_y"] = cf.PositionY
+	mp["show_header"] = cf.ShowHeader
+	mp["type"] = cf.Type
+
+	mp["width"] = cf.Width
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf DirectusPanels) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -2170,11 +2349,9 @@ func (cf DirectusPanels) Track() []IDirectusObject {
 
 	return trakingList
 }
-
 func (cf DirectusPanels) GetId() string {
 	return cf.Id.String()
 }
-
 func (cf DirectusPanels) CollectionName() string {
 	return "directus_panels"
 }
@@ -2224,7 +2401,6 @@ func (cf *DirectusPermissions) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf DirectusPermissions) DeepCopy() IDirectusObject {
 	new_obj := &DirectusPermissions{}
 	new_obj.Action = cf.Action
@@ -2275,6 +2451,23 @@ func (cf DirectusPermissions) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf DirectusPermissions) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["action"] = cf.Action
+	mp["collection"] = cf.Collection
+	mp["fields"] = cf.Fields
+	mp["id"] = cf.Id
+	mp["permissions"] = cf.Permissions
+	mp["presets"] = cf.Presets
+
+	mp["validation"] = cf.Validation
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf DirectusPermissions) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -2285,11 +2478,9 @@ func (cf DirectusPermissions) Track() []IDirectusObject {
 
 	return trakingList
 }
-
 func (cf DirectusPermissions) GetId() string {
 	return fmt.Sprintf("%d", cf.Id)
 }
-
 func (cf DirectusPermissions) CollectionName() string {
 	return "directus_permissions"
 }
@@ -2354,7 +2545,6 @@ func (cf *DirectusPresets) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf DirectusPresets) DeepCopy() IDirectusObject {
 	new_obj := &DirectusPresets{}
 	if cf.Bookmark != nil {
@@ -2521,6 +2711,27 @@ func (cf DirectusPresets) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf DirectusPresets) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["bookmark"] = cf.Bookmark
+	mp["collection"] = cf.Collection
+	mp["color"] = cf.Color
+	mp["filter"] = cf.Filter
+	mp["icon"] = cf.Icon
+	mp["id"] = cf.Id
+	mp["layout"] = cf.Layout
+	mp["layout_options"] = cf.LayoutOptions
+	mp["layout_query"] = cf.LayoutQuery
+	mp["refresh_interval"] = cf.RefreshInterval
+
+	mp["search"] = cf.Search
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf DirectusPresets) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -2535,11 +2746,9 @@ func (cf DirectusPresets) Track() []IDirectusObject {
 	}
 	return trakingList
 }
-
 func (cf DirectusPresets) GetId() string {
 	return fmt.Sprintf("%d", cf.Id)
 }
-
 func (cf DirectusPresets) CollectionName() string {
 	return "directus_presets"
 }
@@ -2595,7 +2804,6 @@ func (cf *DirectusRelations) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf DirectusRelations) DeepCopy() IDirectusObject {
 	new_obj := &DirectusRelations{}
 	new_obj.Id = cf.Id
@@ -2723,16 +2931,33 @@ func (cf DirectusRelations) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf DirectusRelations) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["id"] = cf.Id
+	mp["junction_field"] = cf.JunctionField
+	mp["many_collection"] = cf.ManyCollection
+	mp["many_field"] = cf.ManyField
+	mp["one_allowed_collections"] = cf.OneAllowedCollections
+	mp["one_collection"] = cf.OneCollection
+	mp["one_collection_field"] = cf.OneCollectionField
+	mp["one_deselect_action"] = cf.OneDeselectAction
+	mp["one_field"] = cf.OneField
+	mp["sort_field"] = cf.SortField
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf DirectusRelations) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
 	return trakingList
 }
-
 func (cf DirectusRelations) GetId() string {
 	return fmt.Sprintf("%d", cf.Id)
 }
-
 func (cf DirectusRelations) CollectionName() string {
 	return "directus_relations"
 }
@@ -2782,7 +3007,6 @@ func (cf *DirectusRevisions) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf DirectusRevisions) DeepCopy() IDirectusObject {
 	new_obj := &DirectusRevisions{}
 	if cf.Activity != nil {
@@ -2829,6 +3053,20 @@ func (cf DirectusRevisions) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf DirectusRevisions) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["collection"] = cf.Collection
+	mp["data"] = cf.Data
+	mp["delta"] = cf.Delta
+	mp["id"] = cf.Id
+	mp["item"] = cf.Item
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf DirectusRevisions) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -2847,11 +3085,9 @@ func (cf DirectusRevisions) Track() []IDirectusObject {
 	}
 	return trakingList
 }
-
 func (cf DirectusRevisions) GetId() string {
 	return fmt.Sprintf("%d", cf.Id)
 }
-
 func (cf DirectusRevisions) CollectionName() string {
 	return "directus_revisions"
 }
@@ -2904,7 +3140,6 @@ func (cf *DirectusRoles) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf DirectusRoles) DeepCopy() IDirectusObject {
 	new_obj := &DirectusRoles{}
 	new_obj.AdminAccess = cf.AdminAccess
@@ -2974,6 +3209,23 @@ func (cf DirectusRoles) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf DirectusRoles) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["admin_access"] = cf.AdminAccess
+	mp["app_access"] = cf.AppAccess
+	mp["description"] = cf.Description
+	mp["enforce_tfa"] = cf.EnforceTfa
+	mp["icon"] = cf.Icon
+	mp["id"] = cf.Id
+	mp["ip_access"] = cf.IpAccess
+	mp["name"] = cf.Name
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf DirectusRoles) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -2985,11 +3237,9 @@ func (cf DirectusRoles) Track() []IDirectusObject {
 
 	return trakingList
 }
-
 func (cf DirectusRoles) GetId() string {
 	return cf.Id.String()
 }
-
 func (cf DirectusRoles) CollectionName() string {
 	return "directus_roles"
 }
@@ -3117,7 +3367,6 @@ func (cf *DirectusSettings) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf DirectusSettings) DeepCopy() IDirectusObject {
 	new_obj := &DirectusSettings{}
 	if cf.AuthLoginAttempts != nil {
@@ -3438,6 +3687,49 @@ func (cf DirectusSettings) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf DirectusSettings) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["auth_login_attempts"] = cf.AuthLoginAttempts
+	mp["auth_password_policy"] = cf.AuthPasswordPolicy
+	mp["basemaps"] = cf.Basemaps
+	mp["branding_divider"] = cf.BrandingDivider
+	mp["custom_aspect_ratios"] = cf.CustomAspectRatios
+	mp["custom_css"] = cf.CustomCss
+	mp["default_appearance"] = cf.DefaultAppearance
+	mp["default_language"] = cf.DefaultLanguage
+	mp["default_theme_dark"] = cf.DefaultThemeDark
+	mp["default_theme_light"] = cf.DefaultThemeLight
+	mp["files_divider"] = cf.FilesDivider
+	mp["id"] = cf.Id
+	mp["image_editor"] = cf.ImageEditor
+	mp["map_divider"] = cf.MapDivider
+	mp["mapbox_key"] = cf.MapboxKey
+	mp["module_bar"] = cf.ModuleBar
+	mp["modules_divider"] = cf.ModulesDivider
+	mp["project_color"] = cf.ProjectColor
+	mp["project_descriptor"] = cf.ProjectDescriptor
+
+	mp["project_name"] = cf.ProjectName
+	mp["project_url"] = cf.ProjectUrl
+
+	mp["public_favicon"] = cf.PublicFavicon
+
+	mp["public_note"] = cf.PublicNote
+	mp["security_divider"] = cf.SecurityDivider
+	mp["storage_asset_presets"] = cf.StorageAssetPresets
+	mp["storage_asset_transform"] = cf.StorageAssetTransform
+
+	mp["theme_dark_overrides"] = cf.ThemeDarkOverrides
+	mp["theme_light_overrides"] = cf.ThemeLightOverrides
+	mp["theming_divider"] = cf.ThemingDivider
+	mp["theming_group"] = cf.ThemingGroup
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf DirectusSettings) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -3463,11 +3755,9 @@ func (cf DirectusSettings) Track() []IDirectusObject {
 
 	return trakingList
 }
-
 func (cf DirectusSettings) GetId() string {
 	return fmt.Sprintf("%d", cf.Id)
 }
-
 func (cf DirectusSettings) CollectionName() string {
 	return "directus_settings"
 }
@@ -3526,7 +3816,6 @@ func (cf *DirectusShares) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf DirectusShares) DeepCopy() IDirectusObject {
 	new_obj := &DirectusShares{}
 	if cf.DateCreated != nil {
@@ -3683,6 +3972,25 @@ func (cf DirectusShares) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf DirectusShares) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["date_created"] = cf.DateCreated
+	mp["date_end"] = cf.DateEnd
+	mp["date_start"] = cf.DateStart
+	mp["id"] = cf.Id
+	mp["item"] = cf.Item
+	mp["max_uses"] = cf.MaxUses
+	mp["name"] = cf.Name
+	mp["password"] = cf.Password
+
+	mp["times_used"] = cf.TimesUsed
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf DirectusShares) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -3697,11 +4005,9 @@ func (cf DirectusShares) Track() []IDirectusObject {
 	}
 	return trakingList
 }
-
 func (cf DirectusShares) GetId() string {
 	return cf.Id.String()
 }
-
 func (cf DirectusShares) CollectionName() string {
 	return "directus_shares"
 }
@@ -3739,7 +4045,6 @@ func (cf *DirectusTranslations) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf DirectusTranslations) DeepCopy() IDirectusObject {
 	new_obj := &DirectusTranslations{}
 	new_obj.Id = cf.Id
@@ -3772,16 +4077,27 @@ func (cf DirectusTranslations) Diff(old IDirectusObject) map[string]interface{} 
 	}
 	return diff
 }
+func (cf DirectusTranslations) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["id"] = cf.Id
+	mp["key"] = cf.Key
+	mp["language"] = cf.Language
+	mp["value"] = cf.Value
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf DirectusTranslations) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
 	return trakingList
 }
-
 func (cf DirectusTranslations) GetId() string {
 	return cf.Id.String()
 }
-
 func (cf DirectusTranslations) CollectionName() string {
 	return "directus_translations"
 }
@@ -3894,7 +4210,6 @@ func (cf *DirectusUsers) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf DirectusUsers) DeepCopy() IDirectusObject {
 	new_obj := &DirectusUsers{}
 	new_obj.AdminDivider = cf.AdminDivider
@@ -4270,6 +4585,44 @@ func (cf DirectusUsers) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf DirectusUsers) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["admin_divider"] = cf.AdminDivider
+	mp["appearance"] = cf.Appearance
+	mp["auth_data"] = cf.AuthData
+
+	mp["description"] = cf.Description
+	mp["email"] = cf.Email
+	mp["email_notifications"] = cf.EmailNotifications
+	mp["external_identifier"] = cf.ExternalIdentifier
+	mp["first_name"] = cf.FirstName
+	mp["id"] = cf.Id
+	mp["language"] = cf.Language
+	mp["last_access"] = cf.LastAccess
+	mp["last_name"] = cf.LastName
+	mp["last_page"] = cf.LastPage
+	mp["location"] = cf.Location
+	mp["password"] = cf.Password
+	mp["preferences_divider"] = cf.PreferencesDivider
+	mp["provider"] = cf.Provider
+
+	mp["status"] = cf.Status
+	mp["tags"] = cf.Tags
+	mp["tfa_secret"] = cf.TfaSecret
+	mp["theme_dark"] = cf.ThemeDark
+	mp["theme_dark_overrides"] = cf.ThemeDarkOverrides
+	mp["theme_light"] = cf.ThemeLight
+	mp["theme_light_overrides"] = cf.ThemeLightOverrides
+	mp["theming_divider"] = cf.ThemingDivider
+	mp["title"] = cf.Title
+	mp["token"] = cf.Token
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf DirectusUsers) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -4285,11 +4638,9 @@ func (cf DirectusUsers) Track() []IDirectusObject {
 
 	return trakingList
 }
-
 func (cf DirectusUsers) GetId() string {
 	return cf.Id.String()
 }
-
 func (cf DirectusUsers) CollectionName() string {
 	return "directus_users"
 }
@@ -4342,7 +4693,6 @@ func (cf *DirectusVersions) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf DirectusVersions) DeepCopy() IDirectusObject {
 	new_obj := &DirectusVersions{}
 	if cf.DateCreated != nil {
@@ -4449,6 +4799,22 @@ func (cf DirectusVersions) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf DirectusVersions) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["date_created"] = cf.DateCreated
+	mp["date_updated"] = cf.DateUpdated
+	mp["hash"] = cf.Hash
+	mp["id"] = cf.Id
+	mp["item"] = cf.Item
+	mp["key"] = cf.Key
+	mp["name"] = cf.Name
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf DirectusVersions) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -4462,11 +4828,9 @@ func (cf DirectusVersions) Track() []IDirectusObject {
 	}
 	return trakingList
 }
-
 func (cf DirectusVersions) GetId() string {
 	return cf.Id.String()
 }
-
 func (cf DirectusVersions) CollectionName() string {
 	return "directus_versions"
 }
@@ -4522,7 +4886,6 @@ func (cf *DirectusWebhooks) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf DirectusWebhooks) DeepCopy() IDirectusObject {
 	new_obj := &DirectusWebhooks{}
 	new_obj.Actions = cf.Actions
@@ -4585,16 +4948,33 @@ func (cf DirectusWebhooks) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf DirectusWebhooks) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["actions"] = cf.Actions
+	mp["collections"] = cf.Collections
+	mp["data"] = cf.Data
+	mp["headers"] = cf.Headers
+	mp["id"] = cf.Id
+	mp["method"] = cf.Method
+	mp["name"] = cf.Name
+	mp["status"] = cf.Status
+	mp["triggers_divider"] = cf.TriggersDivider
+	mp["url"] = cf.Url
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf DirectusWebhooks) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
 	return trakingList
 }
-
 func (cf DirectusWebhooks) GetId() string {
 	return fmt.Sprintf("%d", cf.Id)
 }
-
 func (cf DirectusWebhooks) CollectionName() string {
 	return "directus_webhooks"
 }
@@ -4638,7 +5018,6 @@ func (cf *ExternalFiles) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf ExternalFiles) DeepCopy() IDirectusObject {
 	new_obj := &ExternalFiles{}
 	new_obj.Bucket = cf.Bucket
@@ -4705,6 +5084,20 @@ func (cf ExternalFiles) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf ExternalFiles) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["bucket"] = cf.Bucket
+	mp["date_created"] = cf.DateCreated
+	mp["fileext"] = cf.Fileext
+	mp["filehash"] = cf.Filehash
+	mp["id"] = cf.Id
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf ExternalFiles) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -4714,11 +5107,9 @@ func (cf ExternalFiles) Track() []IDirectusObject {
 	}
 	return trakingList
 }
-
 func (cf ExternalFiles) GetId() string {
 	return cf.Id.String()
 }
-
 func (cf ExternalFiles) CollectionName() string {
 	return "ExternalFiles"
 }
@@ -4765,7 +5156,6 @@ func (cf *GameProjects) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf GameProjects) DeepCopy() IDirectusObject {
 	new_obj := &GameProjects{}
 	if cf.Annotation != nil {
@@ -4837,6 +5227,21 @@ func (cf GameProjects) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf GameProjects) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["annotation"] = cf.Annotation
+	mp["balance"] = cf.Balance
+	mp["date_created"] = cf.DateCreated
+
+	mp["id"] = cf.Id
+	mp["name"] = cf.Name
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf GameProjects) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -4852,11 +5257,9 @@ func (cf GameProjects) Track() []IDirectusObject {
 	}
 	return trakingList
 }
-
 func (cf GameProjects) GetId() string {
 	return cf.Id.String()
 }
-
 func (cf GameProjects) CollectionName() string {
 	return "GameProjects"
 }
@@ -4912,7 +5315,6 @@ func (cf *GameServers) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf GameServers) DeepCopy() IDirectusObject {
 	new_obj := &GameServers{}
 	if cf.Address != nil {
@@ -5009,6 +5411,22 @@ func (cf GameServers) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf GameServers) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["address"] = cf.Address
+	mp["date_created"] = cf.DateCreated
+	mp["id"] = cf.Id
+
+	mp["name"] = cf.Name
+
+	mp["server_token"] = cf.ServerToken
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf GameServers) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -5041,11 +5459,9 @@ func (cf GameServers) Track() []IDirectusObject {
 	}
 	return trakingList
 }
-
 func (cf GameServers) GetId() string {
 	return cf.Id.String()
 }
-
 func (cf GameServers) CollectionName() string {
 	return "GameServers"
 }
@@ -5080,7 +5496,6 @@ func (cf *GameServersModerators) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf GameServersModerators) DeepCopy() IDirectusObject {
 	new_obj := &GameServersModerators{}
 	if cf.DirectusUsersId != nil {
@@ -5104,6 +5519,16 @@ func (cf GameServersModerators) Diff(old IDirectusObject) map[string]interface{}
 	}
 	return diff
 }
+func (cf GameServersModerators) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["id"] = cf.Id
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf GameServersModerators) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -5118,11 +5543,9 @@ func (cf GameServersModerators) Track() []IDirectusObject {
 
 	return trakingList
 }
-
 func (cf GameServersModerators) GetId() string {
 	return fmt.Sprintf("%d", cf.Id)
 }
-
 func (cf GameServersModerators) CollectionName() string {
 	return "GameServers_Moderators"
 }
@@ -5163,7 +5586,6 @@ func (cf *KnownIps) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf KnownIps) DeepCopy() IDirectusObject {
 	new_obj := &KnownIps{}
 	if cf.DateCreated != nil {
@@ -5214,6 +5636,19 @@ func (cf KnownIps) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf KnownIps) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["date_created"] = cf.DateCreated
+	mp["id"] = cf.Id
+	mp["ip"] = cf.Ip
+	mp["location"] = cf.Location
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf KnownIps) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -5225,11 +5660,9 @@ func (cf KnownIps) Track() []IDirectusObject {
 
 	return trakingList
 }
-
 func (cf KnownIps) GetId() string {
 	return cf.Id.String()
 }
-
 func (cf KnownIps) CollectionName() string {
 	return "KnownIps"
 }
@@ -5291,7 +5724,6 @@ func (cf *PlayerBans) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf PlayerBans) DeepCopy() IDirectusObject {
 	new_obj := &PlayerBans{}
 	new_obj.BannedTill = cf.BannedTill
@@ -5379,6 +5811,24 @@ func (cf PlayerBans) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf PlayerBans) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["banned_till"] = cf.BannedTill
+	mp["date_created"] = cf.DateCreated
+
+	mp["id"] = cf.Id
+
+	mp["project_ban"] = cf.ProjectBan
+	mp["reason"] = cf.Reason
+
+	mp["unbanned"] = cf.Unbanned
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf PlayerBans) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -5412,11 +5862,9 @@ func (cf PlayerBans) Track() []IDirectusObject {
 	}
 	return trakingList
 }
-
 func (cf PlayerBans) GetId() string {
 	return cf.Id.String()
 }
-
 func (cf PlayerBans) CollectionName() string {
 	return "PlayerBans"
 }
@@ -5451,7 +5899,6 @@ func (cf *PlayerBansExternalFiles) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf PlayerBansExternalFiles) DeepCopy() IDirectusObject {
 	new_obj := &PlayerBansExternalFiles{}
 	if cf.ExternalFilesId != nil {
@@ -5475,6 +5922,16 @@ func (cf PlayerBansExternalFiles) Diff(old IDirectusObject) map[string]interface
 	}
 	return diff
 }
+func (cf PlayerBansExternalFiles) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["id"] = cf.Id
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf PlayerBansExternalFiles) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -5489,11 +5946,9 @@ func (cf PlayerBansExternalFiles) Track() []IDirectusObject {
 	}
 	return trakingList
 }
-
 func (cf PlayerBansExternalFiles) GetId() string {
 	return fmt.Sprintf("%d", cf.Id)
 }
-
 func (cf PlayerBansExternalFiles) CollectionName() string {
 	return "PlayerBans_ExternalFiles"
 }
@@ -5534,7 +5989,6 @@ func (cf *PlayerChecks) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf PlayerChecks) DeepCopy() IDirectusObject {
 	new_obj := &PlayerChecks{}
 	if cf.DateCreated != nil {
@@ -5580,6 +6034,17 @@ func (cf PlayerChecks) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf PlayerChecks) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["date_created"] = cf.DateCreated
+	mp["id"] = cf.Id
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf PlayerChecks) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -5597,11 +6062,9 @@ func (cf PlayerChecks) Track() []IDirectusObject {
 	}
 	return trakingList
 }
-
 func (cf PlayerChecks) GetId() string {
 	return cf.Id.String()
 }
-
 func (cf PlayerChecks) CollectionName() string {
 	return "PlayerChecks"
 }
@@ -5639,7 +6102,6 @@ func (cf *PlayerEvents) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf PlayerEvents) DeepCopy() IDirectusObject {
 	new_obj := &PlayerEvents{}
 	if cf.DateCreated != nil {
@@ -5684,6 +6146,18 @@ func (cf PlayerEvents) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf PlayerEvents) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["date_created"] = cf.DateCreated
+	mp["event"] = cf.Event
+	mp["id"] = cf.Id
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf PlayerEvents) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -5693,11 +6167,9 @@ func (cf PlayerEvents) Track() []IDirectusObject {
 	}
 	return trakingList
 }
-
 func (cf PlayerEvents) GetId() string {
 	return cf.Id.String()
 }
-
 func (cf PlayerEvents) CollectionName() string {
 	return "PlayerEvents"
 }
@@ -5738,7 +6210,6 @@ func (cf *PlayerReports) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf PlayerReports) DeepCopy() IDirectusObject {
 	new_obj := &PlayerReports{}
 	if cf.DateCreated != nil {
@@ -5799,6 +6270,18 @@ func (cf PlayerReports) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf PlayerReports) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["date_created"] = cf.DateCreated
+	mp["id"] = cf.Id
+	mp["reason"] = cf.Reason
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf PlayerReports) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -5812,11 +6295,9 @@ func (cf PlayerReports) Track() []IDirectusObject {
 	}
 	return trakingList
 }
-
 func (cf PlayerReports) GetId() string {
 	return cf.Id.String()
 }
-
 func (cf PlayerReports) CollectionName() string {
 	return "PlayerReports"
 }
@@ -5860,7 +6341,6 @@ func (cf *ServerChatMessages) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf ServerChatMessages) DeepCopy() IDirectusObject {
 	new_obj := &ServerChatMessages{}
 	new_obj.Content = cf.Content
@@ -5925,6 +6405,19 @@ func (cf ServerChatMessages) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf ServerChatMessages) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["content"] = cf.Content
+	mp["date_created"] = cf.DateCreated
+	mp["id"] = cf.Id
+	mp["prefix"] = cf.Prefix
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf ServerChatMessages) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -5938,11 +6431,9 @@ func (cf ServerChatMessages) Track() []IDirectusObject {
 	}
 	return trakingList
 }
-
 func (cf ServerChatMessages) GetId() string {
 	return cf.Id.String()
 }
-
 func (cf ServerChatMessages) CollectionName() string {
 	return "ServerChatMessages"
 }
@@ -5998,7 +6489,6 @@ func (cf *ServerPlayers) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf ServerPlayers) DeepCopy() IDirectusObject {
 	new_obj := &ServerPlayers{}
 	if cf.DateCreated != nil {
@@ -6066,6 +6556,18 @@ func (cf ServerPlayers) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf ServerPlayers) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["date_created"] = cf.DateCreated
+	mp["id"] = cf.Id
+	mp["online"] = cf.Online
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf ServerPlayers) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -6109,11 +6611,9 @@ func (cf ServerPlayers) Track() []IDirectusObject {
 	}
 	return trakingList
 }
-
 func (cf ServerPlayers) GetId() string {
 	return cf.Id.String()
 }
-
 func (cf ServerPlayers) CollectionName() string {
 	return "ServerPlayers"
 }
@@ -6166,7 +6666,6 @@ func (cf *SteamUsers) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf SteamUsers) DeepCopy() IDirectusObject {
 	new_obj := &SteamUsers{}
 	if cf.Avatar != nil {
@@ -6244,6 +6743,22 @@ func (cf SteamUsers) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf SteamUsers) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["date_created"] = cf.DateCreated
+	mp["date_updated"] = cf.DateUpdated
+	mp["id"] = cf.Id
+
+	mp["nickname"] = cf.Nickname
+
+	mp["steamid"] = cf.Steamid
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf SteamUsers) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
@@ -6269,11 +6784,9 @@ func (cf SteamUsers) Track() []IDirectusObject {
 	}
 	return trakingList
 }
-
 func (cf SteamUsers) GetId() string {
 	return cf.Id.String()
 }
-
 func (cf SteamUsers) CollectionName() string {
 	return "SteamUsers"
 }
@@ -6302,7 +6815,6 @@ func (cf *Test) UnmarshalJSON(data []byte) error {
 	}
 	return nil
 }
-
 func (cf Test) DeepCopy() IDirectusObject {
 	new_obj := &Test{}
 	new_obj.Id = cf.Id
@@ -6320,16 +6832,24 @@ func (cf Test) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
+func (cf Test) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["id"] = cf.Id
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
 func (cf Test) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
 	return trakingList
 }
-
 func (cf Test) GetId() string {
 	return cf.Id.String()
 }
-
 func (cf Test) CollectionName() string {
 	return "test"
 }

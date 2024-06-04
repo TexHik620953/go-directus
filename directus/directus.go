@@ -5,8 +5,10 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"path"
 	"strconv"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -25,12 +27,19 @@ type trackingRef struct {
 }
 
 func (h trackingRef) delta() map[string]any {
+	if h.Original == nil {
+		return h.Actual.(IDirectusObject).Map()
+	}
+
 	return h.Actual.(IDirectusObject).Diff(h.Original.(IDirectusObject))
 }
 
 type DirectusApi struct {
 	directusUrl *url.URL
 	token       string
+
+	errLogger  *log.Logger
+	infoLogger *log.Logger
 
 	trackingObjects map[IDirectusObject]trackingRef
 
@@ -83,6 +92,8 @@ func New(addr, token string) (*DirectusApi, error) {
 		directusUrl:     u,
 		token:           token,
 		trackingObjects: map[IDirectusObject]trackingRef{},
+		errLogger:       log.New(os.Stdout, "[DIRECTUS-API][ERROR]\t", log.Ltime),
+		infoLogger:      log.New(os.Stdout, "[DIRECTUS-API][INFO]\t", log.Ltime),
 	}
 	err = h.PingDirectus()
 	if err != nil {
@@ -179,19 +190,21 @@ func (h *DirectusApi) PingDirectus() error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
+		h.errLogger.Printf("Directus ping failed: %s\n", err.Error())
 		return fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 	return nil
 }
 
 func NewDirectusCollectionAccessor[K string | uuid.UUID | int, V IDirectusObject](api *DirectusApi, collectionName string) *DirectusCollectionAccessor[K, V] {
+	api.infoLogger.Printf("Created collection accessor for %s\n", collectionName)
 	return &DirectusCollectionAccessor[K, V]{
 		api:            api,
 		collectionName: collectionName,
 	}
 }
 
-func (h *DirectusApi) add2Track(val any) bool {
+func (h *DirectusApi) add2Track(val any) {
 	objects := val.(IDirectusObject).Track()
 	objects = append(objects, val.(IDirectusObject))
 	for _, obj := range objects {
@@ -201,6 +214,7 @@ func (h *DirectusApi) add2Track(val any) bool {
 			if !exists {
 				log.Fatalf("Collection accessor for object: %s not exists in map", obj.CollectionName())
 			}
+			h.infoLogger.Printf("Added tracking reference for object of type [%s]\n", obj.CollectionName())
 			obj_copy := obj.DeepCopy()
 			ref := trackingRef{
 				Original:        obj_copy,
@@ -210,20 +224,45 @@ func (h *DirectusApi) add2Track(val any) bool {
 			h.trackingObjects[obj] = ref
 		}
 	}
-	return false
+}
+
+func (h *DirectusApi) AddTrackingReference(val any) {
+	objects := val.(IDirectusObject).Track()
+	objects = append(objects, val.(IDirectusObject))
+	for _, obj := range objects {
+		_, exists := h.trackingObjects[obj]
+		if !exists {
+			ownerCollection, exists := h.collectionsAccessors[obj.CollectionName()]
+			if !exists {
+				log.Fatalf("Collection accessor for object: %s not exists in map", obj.CollectionName())
+			}
+			h.infoLogger.Printf("Added tracking reference for object of type [%s]\n", obj.CollectionName())
+			ref := trackingRef{
+				Actual:          obj,
+				OwnerCollection: ownerCollection,
+			}
+			h.trackingObjects[obj] = ref
+		}
+	}
 }
 
 func (h *DirectusApi) SaveChanges() error {
+	affectedObjects := 0
+	startTime := time.Now()
 	for _, obj := range h.trackingObjects {
 		diff := obj.delta()
 		if diff != nil {
 			cas := obj.OwnerCollection
-			err := cas.patch(diff, obj.Original.GetId())
+			err := cas.patch(diff, obj.Actual.GetId())
 			if err != nil {
+				h.errLogger.Printf("Failed to save changes for object of type [%s]: %s\n", obj.Original.CollectionName(), err.Error())
 				return err
 			}
+			affectedObjects++
 		}
 	}
+	deltaTime := time.Since(startTime)
+	h.infoLogger.Printf("Changes saved, affected [%d] objects, %s\n", affectedObjects, deltaTime)
 	return nil
 }
 

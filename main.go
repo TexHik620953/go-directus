@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"go-directus/directus"
 	"log"
 )
@@ -14,17 +13,15 @@ func main() {
 
 	server, err := directusApi.GameServersCollectionAccessor.ReadAll().
 		Where(`name == "!23"`).
-		Include("*, *.*").
+		Include("*, moderators.*, project.*").
 		First()
 	if err != nil {
 		log.Fatal(err)
 	}
-	*server.Project.Annotation = "Srakotan"
 
 	err = directusApi.SaveChanges()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println(server)
 }
