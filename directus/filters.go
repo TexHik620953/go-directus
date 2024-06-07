@@ -89,7 +89,7 @@ func (h *CollectionQuery[K, V]) buildWhereFilters() (string, error) {
 		}
 		switch rkind {
 		case token.STRING:
-			fmap[left[0]] = deepCreate(map[FilterOperation]any{op: right}, left)
+			fmap[left[0]] = deepCreate(map[FilterOperation]any{op: right[0]}, left)
 		case token.INT:
 			v, _ := strconv.ParseInt(right[0], 10, 32)
 			fmap[left[0]] = deepCreate(map[FilterOperation]any{op: int32(v)}, left)
