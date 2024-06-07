@@ -47,27 +47,27 @@ func getOperator(op token.Token) (FilterOperation, error) {
 		return FilterOperation(""), fmt.Errorf("Failed to get operator from ast tree")
 	}
 }
-func getOperand(op ast.Expr) (string, token.Token, error) {
+func getOperand(op ast.Expr) ([]string, token.Token, error) {
 	switch op.(type) {
 	case *ast.BasicLit:
 		operand := op.(*ast.BasicLit)
 		litname := strings.ReplaceAll(operand.Value, "\"", "")
 		litname = strings.ReplaceAll(litname, "'", "")
-		return litname, operand.Kind, nil
+		return []string{litname}, operand.Kind, nil
 	case *ast.SelectorExpr:
 		innerOp, _, err := getOperand(op.(*ast.SelectorExpr).X)
 		if err != nil {
-			return "", 0, err
+			return nil, 0, err
 		}
-		return fmt.Sprintf("%s.%s", innerOp, op.(*ast.SelectorExpr).Sel), 0, nil
+		return append(innerOp, op.(*ast.SelectorExpr).Sel.Name), 0, nil
 	case *ast.Ident:
-		return op.(*ast.Ident).Name, 0, nil
+		return []string{op.(*ast.Ident).Name}, 0, nil
 	}
-	return "", 0, fmt.Errorf("Failed to get operand from ast tree")
+	return nil, 0, fmt.Errorf("Failed to get operand from ast tree")
 }
 
 func (h *CollectionQuery[K, V]) buildWhereFilters() (string, error) {
-	fmap := make(map[string]map[FilterOperation]any)
+	fmap := make(map[string]any)
 
 	for _, filterString := range h.whereFilters {
 
@@ -89,16 +89,13 @@ func (h *CollectionQuery[K, V]) buildWhereFilters() (string, error) {
 		}
 		switch rkind {
 		case token.STRING:
-			fmap[left] = map[FilterOperation]any{op: right}
-			break
+			fmap[left[0]] = deepCreate(map[FilterOperation]any{op: right}, left)
 		case token.INT:
-			v, _ := strconv.ParseInt(right, 10, 32)
-			fmap[left] = map[FilterOperation]any{op: int32(v)}
-			break
+			v, _ := strconv.ParseInt(right[0], 10, 32)
+			fmap[left[0]] = deepCreate(map[FilterOperation]any{op: int32(v)}, left)
 		case token.FLOAT:
-			v, _ := strconv.ParseFloat(right, 32)
-			fmap[left] = map[FilterOperation]any{op: float32(v)}
-			break
+			v, _ := strconv.ParseFloat(right[0], 32)
+			fmap[left[0]] = deepCreate(map[FilterOperation]any{op: float32(v)}, left)
 		}
 
 	}
@@ -112,4 +109,13 @@ func (h *CollectionQuery[K, V]) buildWhereFilters() (string, error) {
 func (h *CollectionQuery[K, V]) buildSelectors() string {
 	fields := strings.Join(h.fieldSelectors, ",")
 	return fields
+}
+
+func deepCreate(obj any, path []string) any {
+	for i := len(path) - 1; i > 0; i-- {
+		obj = map[string]any{
+			path[i]: obj,
+		}
+	}
+	return obj
 }
