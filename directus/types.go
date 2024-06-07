@@ -17,240 +17,6 @@ type IDirectusObject interface {
 	Map() map[string]interface{}
 }
 
-type CheckEvents struct {
-	IDirectusObject
-	Check       *PlayerChecks `json:"check"`
-	DateCreated *time.Time    `json:"date_created"`
-	Event       any           `json:"event"`
-	Id          uuid.UUID     `json:"id"`
-}
-
-func (cf *CheckEvents) UnmarshalJSON(data []byte) error {
-	type checkevents_internal struct {
-		Check       *PlayerChecks `json:"check"`
-		DateCreated *time.Time    `json:"date_created"`
-		Event       any           `json:"event"`
-		Id          uuid.UUID     `json:"id"`
-	}
-	if data[0] == '"' { //Data is a string
-		return json.Unmarshal(data, &cf.Id)
-	} else if data[0] == '{' { //Data is an object
-		var _obj checkevents_internal
-		err := json.Unmarshal(data, &_obj)
-		if err != nil {
-			return err
-		}
-		cf.Check = _obj.Check
-		cf.DateCreated = _obj.DateCreated
-		cf.Event = _obj.Event
-		cf.Id = _obj.Id
-	} else {
-		//Number or unkown, probably id
-		return json.Unmarshal(data, &cf.Id)
-	}
-	return nil
-}
-func (cf CheckEvents) DeepCopy() IDirectusObject {
-	new_obj := &CheckEvents{}
-	if cf.Check != nil {
-		new_obj.Check = (*cf.Check).DeepCopy().(*PlayerChecks)
-	}
-	if cf.DateCreated != nil {
-		temp := time.Time{}
-		new_obj.DateCreated = &temp
-		*new_obj.DateCreated = *cf.DateCreated
-	}
-	new_obj.Event = cf.Event
-	new_obj.Id = cf.Id
-	return new_obj
-}
-func (cf CheckEvents) Diff(old IDirectusObject) map[string]interface{} {
-	diff := make(map[string]interface{})
-
-	if cf.DateCreated == nil {
-		if old.(*CheckEvents).DateCreated != nil {
-			diff["date_created"] = nil
-		}
-	} else {
-		if old.(*CheckEvents).DateCreated == nil {
-			diff["date_created"] = cf.DateCreated
-		} else {
-			if *cf.DateCreated != *old.(*CheckEvents).DateCreated {
-				diff["date_created"] = cf.DateCreated
-			}
-		}
-	}
-
-	if cf.Event != old.(*CheckEvents).Event {
-		diff["event"] = cf.Event
-	}
-
-	if cf.Id != old.(*CheckEvents).Id {
-		diff["id"] = cf.Id
-	}
-
-	if len(diff) == 0 {
-		return nil
-	}
-	return diff
-}
-func (cf CheckEvents) Map() map[string]interface{} {
-	mp := make(map[string]interface{})
-
-	mp["date_created"] = cf.DateCreated
-	mp["event"] = cf.Event
-	mp["id"] = cf.Id
-
-	if len(mp) == 0 {
-		return nil
-	}
-	return mp
-}
-func (cf CheckEvents) Track() []IDirectusObject {
-	trakingList := make([]IDirectusObject, 0)
-
-	if cf.Check != nil {
-		trakingList = append(trakingList, cf.Check)
-		trakingList = append(trakingList, cf.Check.Track()...)
-	}
-
-	return trakingList
-}
-func (cf CheckEvents) GetId() string {
-	return cf.Id.String()
-}
-func (cf CheckEvents) CollectionName() string {
-	return "CheckEvents"
-}
-
-type CheckMessages struct {
-	IDirectusObject
-	Check       *PlayerChecks  `json:"check"`
-	DateCreated *time.Time     `json:"date_created"`
-	Fromplayer  *ServerPlayers `json:"fromplayer"`
-	Fromuser    *DirectusUsers `json:"fromuser"`
-	Id          uuid.UUID      `json:"id"`
-	Message     string         `json:"message"`
-}
-
-func (cf *CheckMessages) UnmarshalJSON(data []byte) error {
-	type checkmessages_internal struct {
-		Check       *PlayerChecks  `json:"check"`
-		DateCreated *time.Time     `json:"date_created"`
-		Fromplayer  *ServerPlayers `json:"fromplayer"`
-		Fromuser    *DirectusUsers `json:"fromuser"`
-		Id          uuid.UUID      `json:"id"`
-		Message     string         `json:"message"`
-	}
-	if data[0] == '"' { //Data is a string
-		return json.Unmarshal(data, &cf.Id)
-	} else if data[0] == '{' { //Data is an object
-		var _obj checkmessages_internal
-		err := json.Unmarshal(data, &_obj)
-		if err != nil {
-			return err
-		}
-		cf.Check = _obj.Check
-		cf.DateCreated = _obj.DateCreated
-		cf.Fromplayer = _obj.Fromplayer
-		cf.Fromuser = _obj.Fromuser
-		cf.Id = _obj.Id
-		cf.Message = _obj.Message
-	} else {
-		//Number or unkown, probably id
-		return json.Unmarshal(data, &cf.Id)
-	}
-	return nil
-}
-func (cf CheckMessages) DeepCopy() IDirectusObject {
-	new_obj := &CheckMessages{}
-	if cf.Check != nil {
-		new_obj.Check = (*cf.Check).DeepCopy().(*PlayerChecks)
-	}
-	if cf.DateCreated != nil {
-		temp := time.Time{}
-		new_obj.DateCreated = &temp
-		*new_obj.DateCreated = *cf.DateCreated
-	}
-	if cf.Fromplayer != nil {
-		new_obj.Fromplayer = (*cf.Fromplayer).DeepCopy().(*ServerPlayers)
-	}
-	if cf.Fromuser != nil {
-		new_obj.Fromuser = (*cf.Fromuser).DeepCopy().(*DirectusUsers)
-	}
-	new_obj.Id = cf.Id
-	new_obj.Message = cf.Message
-	return new_obj
-}
-func (cf CheckMessages) Diff(old IDirectusObject) map[string]interface{} {
-	diff := make(map[string]interface{})
-
-	if cf.DateCreated == nil {
-		if old.(*CheckMessages).DateCreated != nil {
-			diff["date_created"] = nil
-		}
-	} else {
-		if old.(*CheckMessages).DateCreated == nil {
-			diff["date_created"] = cf.DateCreated
-		} else {
-			if *cf.DateCreated != *old.(*CheckMessages).DateCreated {
-				diff["date_created"] = cf.DateCreated
-			}
-		}
-	}
-
-	if cf.Id != old.(*CheckMessages).Id {
-		diff["id"] = cf.Id
-	}
-
-	if cf.Message != old.(*CheckMessages).Message {
-		diff["message"] = cf.Message
-	}
-
-	if len(diff) == 0 {
-		return nil
-	}
-	return diff
-}
-func (cf CheckMessages) Map() map[string]interface{} {
-	mp := make(map[string]interface{})
-
-	mp["date_created"] = cf.DateCreated
-
-	mp["id"] = cf.Id
-	mp["message"] = cf.Message
-
-	if len(mp) == 0 {
-		return nil
-	}
-	return mp
-}
-func (cf CheckMessages) Track() []IDirectusObject {
-	trakingList := make([]IDirectusObject, 0)
-
-	if cf.Check != nil {
-		trakingList = append(trakingList, cf.Check)
-		trakingList = append(trakingList, cf.Check.Track()...)
-	}
-
-	if cf.Fromplayer != nil {
-		trakingList = append(trakingList, cf.Fromplayer)
-		trakingList = append(trakingList, cf.Fromplayer.Track()...)
-	}
-	if cf.Fromuser != nil {
-		trakingList = append(trakingList, cf.Fromuser)
-		trakingList = append(trakingList, cf.Fromuser.Track()...)
-	}
-
-	return trakingList
-}
-func (cf CheckMessages) GetId() string {
-	return cf.Id.String()
-}
-func (cf CheckMessages) CollectionName() string {
-	return "CheckMessages"
-}
-
 type DirectusActivity struct {
 	IDirectusObject
 	Action     string              `json:"action"`
@@ -636,6 +402,119 @@ func (cf DirectusDashboards) CollectionName() string {
 	return "directus_dashboards"
 }
 
+type DirectusExtensions struct {
+	IDirectusObject
+	Bundle  *uuid.UUID `json:"bundle"`
+	Enabled bool       `json:"enabled"`
+	Folder  string     `json:"folder"`
+	Id      uuid.UUID  `json:"id"`
+	Source  string     `json:"source"`
+}
+
+func (cf *DirectusExtensions) UnmarshalJSON(data []byte) error {
+	type directusextensions_internal struct {
+		Bundle  *uuid.UUID `json:"bundle"`
+		Enabled bool       `json:"enabled"`
+		Folder  string     `json:"folder"`
+		Id      uuid.UUID  `json:"id"`
+		Source  string     `json:"source"`
+	}
+	if data[0] == '"' { //Data is a string
+		return json.Unmarshal(data, &cf.Id)
+	} else if data[0] == '{' { //Data is an object
+		var _obj directusextensions_internal
+		err := json.Unmarshal(data, &_obj)
+		if err != nil {
+			return err
+		}
+		cf.Bundle = _obj.Bundle
+		cf.Enabled = _obj.Enabled
+		cf.Folder = _obj.Folder
+		cf.Id = _obj.Id
+		cf.Source = _obj.Source
+	} else {
+		//Number or unkown, probably id
+		return json.Unmarshal(data, &cf.Id)
+	}
+	return nil
+}
+func (cf DirectusExtensions) DeepCopy() IDirectusObject {
+	new_obj := &DirectusExtensions{}
+	if cf.Bundle != nil {
+		temp := uuid.Nil
+		new_obj.Bundle = &temp
+		*new_obj.Bundle = *cf.Bundle
+	}
+	new_obj.Enabled = cf.Enabled
+	new_obj.Folder = cf.Folder
+	new_obj.Id = cf.Id
+	new_obj.Source = cf.Source
+	return new_obj
+}
+func (cf DirectusExtensions) Diff(old IDirectusObject) map[string]interface{} {
+	diff := make(map[string]interface{})
+
+	if cf.Bundle == nil {
+		if old.(*DirectusExtensions).Bundle != nil {
+			diff["bundle"] = nil
+		}
+	} else {
+		if old.(*DirectusExtensions).Bundle == nil {
+			diff["bundle"] = cf.Bundle
+		} else {
+			if *cf.Bundle != *old.(*DirectusExtensions).Bundle {
+				diff["bundle"] = cf.Bundle
+			}
+		}
+	}
+
+	if cf.Enabled != old.(*DirectusExtensions).Enabled {
+		diff["enabled"] = cf.Enabled
+	}
+
+	if cf.Folder != old.(*DirectusExtensions).Folder {
+		diff["folder"] = cf.Folder
+	}
+
+	if cf.Id != old.(*DirectusExtensions).Id {
+		diff["id"] = cf.Id
+	}
+
+	if cf.Source != old.(*DirectusExtensions).Source {
+		diff["source"] = cf.Source
+	}
+
+	if len(diff) == 0 {
+		return nil
+	}
+	return diff
+}
+func (cf DirectusExtensions) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["bundle"] = cf.Bundle
+	mp["enabled"] = cf.Enabled
+	mp["folder"] = cf.Folder
+	mp["id"] = cf.Id
+	mp["source"] = cf.Source
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
+func (cf DirectusExtensions) Track() []IDirectusObject {
+	trakingList := make([]IDirectusObject, 0)
+
+	return trakingList
+}
+func (cf DirectusExtensions) GetId() string {
+	return cf.Id.String()
+}
+func (cf DirectusExtensions) CollectionName() string {
+	return "directus_extensions"
+}
+
 type DirectusFields struct {
 	IDirectusObject
 	Conditions        any             `json:"conditions"`
@@ -948,54 +827,60 @@ func (cf DirectusFields) CollectionName() string {
 
 type DirectusFiles struct {
 	IDirectusObject
-	Charset          *string          `json:"charset"`
-	Description      *string          `json:"description"`
-	Duration         *int             `json:"duration"`
-	Embed            *string          `json:"embed"`
-	FilenameDisk     *string          `json:"filename_disk"`
-	FilenameDownload string           `json:"filename_download"`
-	Filesize         *string          `json:"filesize"`
-	Folder           *DirectusFolders `json:"folder"`
-	Height           *int             `json:"height"`
-	Id               uuid.UUID        `json:"id"`
-	Location         *string          `json:"location"`
-	Metadata         any              `json:"metadata"`
-	ModifiedBy       *DirectusUsers   `json:"modified_by"`
-	ModifiedOn       time.Time        `json:"modified_on"`
-	Storage          string           `json:"storage"`
-	StorageDivider   any              `json:"storage_divider"`
-	Tags             any              `json:"tags"`
-	Title            *string          `json:"title"`
-	Type             *string          `json:"type"`
-	UploadedBy       *DirectusUsers   `json:"uploaded_by"`
-	UploadedOn       time.Time        `json:"uploaded_on"`
-	Width            *int             `json:"width"`
+	Charset           *string          `json:"charset"`
+	Description       *string          `json:"description"`
+	Duration          *int             `json:"duration"`
+	Embed             *string          `json:"embed"`
+	FilenameDisk      *string          `json:"filename_disk"`
+	FilenameDownload  string           `json:"filename_download"`
+	Filesize          *string          `json:"filesize"`
+	FocalPointDivider any              `json:"focal_point_divider"`
+	FocalPointX       *int             `json:"focal_point_x"`
+	FocalPointY       *int             `json:"focal_point_y"`
+	Folder            *DirectusFolders `json:"folder"`
+	Height            *int             `json:"height"`
+	Id                uuid.UUID        `json:"id"`
+	Location          *string          `json:"location"`
+	Metadata          any              `json:"metadata"`
+	ModifiedBy        *DirectusUsers   `json:"modified_by"`
+	ModifiedOn        time.Time        `json:"modified_on"`
+	Storage           string           `json:"storage"`
+	StorageDivider    any              `json:"storage_divider"`
+	Tags              any              `json:"tags"`
+	Title             *string          `json:"title"`
+	Type              *string          `json:"type"`
+	UploadedBy        *DirectusUsers   `json:"uploaded_by"`
+	UploadedOn        time.Time        `json:"uploaded_on"`
+	Width             *int             `json:"width"`
 }
 
 func (cf *DirectusFiles) UnmarshalJSON(data []byte) error {
 	type directusfiles_internal struct {
-		Charset          *string          `json:"charset"`
-		Description      *string          `json:"description"`
-		Duration         *int             `json:"duration"`
-		Embed            *string          `json:"embed"`
-		FilenameDisk     *string          `json:"filename_disk"`
-		FilenameDownload string           `json:"filename_download"`
-		Filesize         *string          `json:"filesize"`
-		Folder           *DirectusFolders `json:"folder"`
-		Height           *int             `json:"height"`
-		Id               uuid.UUID        `json:"id"`
-		Location         *string          `json:"location"`
-		Metadata         any              `json:"metadata"`
-		ModifiedBy       *DirectusUsers   `json:"modified_by"`
-		ModifiedOn       time.Time        `json:"modified_on"`
-		Storage          string           `json:"storage"`
-		StorageDivider   any              `json:"storage_divider"`
-		Tags             any              `json:"tags"`
-		Title            *string          `json:"title"`
-		Type             *string          `json:"type"`
-		UploadedBy       *DirectusUsers   `json:"uploaded_by"`
-		UploadedOn       time.Time        `json:"uploaded_on"`
-		Width            *int             `json:"width"`
+		Charset           *string          `json:"charset"`
+		Description       *string          `json:"description"`
+		Duration          *int             `json:"duration"`
+		Embed             *string          `json:"embed"`
+		FilenameDisk      *string          `json:"filename_disk"`
+		FilenameDownload  string           `json:"filename_download"`
+		Filesize          *string          `json:"filesize"`
+		FocalPointDivider any              `json:"focal_point_divider"`
+		FocalPointX       *int             `json:"focal_point_x"`
+		FocalPointY       *int             `json:"focal_point_y"`
+		Folder            *DirectusFolders `json:"folder"`
+		Height            *int             `json:"height"`
+		Id                uuid.UUID        `json:"id"`
+		Location          *string          `json:"location"`
+		Metadata          any              `json:"metadata"`
+		ModifiedBy        *DirectusUsers   `json:"modified_by"`
+		ModifiedOn        time.Time        `json:"modified_on"`
+		Storage           string           `json:"storage"`
+		StorageDivider    any              `json:"storage_divider"`
+		Tags              any              `json:"tags"`
+		Title             *string          `json:"title"`
+		Type              *string          `json:"type"`
+		UploadedBy        *DirectusUsers   `json:"uploaded_by"`
+		UploadedOn        time.Time        `json:"uploaded_on"`
+		Width             *int             `json:"width"`
 	}
 	if data[0] == '"' { //Data is a string
 		return json.Unmarshal(data, &cf.Id)
@@ -1012,6 +897,9 @@ func (cf *DirectusFiles) UnmarshalJSON(data []byte) error {
 		cf.FilenameDisk = _obj.FilenameDisk
 		cf.FilenameDownload = _obj.FilenameDownload
 		cf.Filesize = _obj.Filesize
+		cf.FocalPointDivider = _obj.FocalPointDivider
+		cf.FocalPointX = _obj.FocalPointX
+		cf.FocalPointY = _obj.FocalPointY
 		cf.Folder = _obj.Folder
 		cf.Height = _obj.Height
 		cf.Id = _obj.Id
@@ -1065,6 +953,17 @@ func (cf DirectusFiles) DeepCopy() IDirectusObject {
 		temp := ""
 		new_obj.Filesize = &temp
 		*new_obj.Filesize = *cf.Filesize
+	}
+	new_obj.FocalPointDivider = cf.FocalPointDivider
+	if cf.FocalPointX != nil {
+		temp := 0
+		new_obj.FocalPointX = &temp
+		*new_obj.FocalPointX = *cf.FocalPointX
+	}
+	if cf.FocalPointY != nil {
+		temp := 0
+		new_obj.FocalPointY = &temp
+		*new_obj.FocalPointY = *cf.FocalPointY
 	}
 	if cf.Folder != nil {
 		new_obj.Folder = (*cf.Folder).DeepCopy().(*DirectusFolders)
@@ -1195,6 +1094,36 @@ func (cf DirectusFiles) Diff(old IDirectusObject) map[string]interface{} {
 		}
 	}
 
+	if cf.FocalPointDivider != old.(*DirectusFiles).FocalPointDivider {
+		diff["focal_point_divider"] = cf.FocalPointDivider
+	}
+	if cf.FocalPointX == nil {
+		if old.(*DirectusFiles).FocalPointX != nil {
+			diff["focal_point_x"] = nil
+		}
+	} else {
+		if old.(*DirectusFiles).FocalPointX == nil {
+			diff["focal_point_x"] = cf.FocalPointX
+		} else {
+			if *cf.FocalPointX != *old.(*DirectusFiles).FocalPointX {
+				diff["focal_point_x"] = cf.FocalPointX
+			}
+		}
+	}
+	if cf.FocalPointY == nil {
+		if old.(*DirectusFiles).FocalPointY != nil {
+			diff["focal_point_y"] = nil
+		}
+	} else {
+		if old.(*DirectusFiles).FocalPointY == nil {
+			diff["focal_point_y"] = cf.FocalPointY
+		} else {
+			if *cf.FocalPointY != *old.(*DirectusFiles).FocalPointY {
+				diff["focal_point_y"] = cf.FocalPointY
+			}
+		}
+	}
+
 	if cf.Height == nil {
 		if old.(*DirectusFiles).Height != nil {
 			diff["height"] = nil
@@ -1304,6 +1233,9 @@ func (cf DirectusFiles) Map() map[string]interface{} {
 	mp["filename_disk"] = cf.FilenameDisk
 	mp["filename_download"] = cf.FilenameDownload
 	mp["filesize"] = cf.Filesize
+	mp["focal_point_divider"] = cf.FocalPointDivider
+	mp["focal_point_x"] = cf.FocalPointX
+	mp["focal_point_y"] = cf.FocalPointY
 
 	mp["height"] = cf.Height
 	mp["id"] = cf.Id
@@ -3269,9 +3201,13 @@ type DirectusSettings struct {
 	ProjectName           string           `json:"project_name"`
 	ProjectUrl            *string          `json:"project_url"`
 	PublicBackground      *DirectusFiles   `json:"public_background"`
-	PublicFavicon         *uuid.UUID       `json:"public_favicon"`
+	PublicFavicon         *DirectusFiles   `json:"public_favicon"`
 	PublicForeground      *DirectusFiles   `json:"public_foreground"`
 	PublicNote            *string          `json:"public_note"`
+	ReportBugUrl          *string          `json:"report_bug_url"`
+	ReportErrorUrl        *string          `json:"report_error_url"`
+	ReportFeatureUrl      *string          `json:"report_feature_url"`
+	ReportingDivider      any              `json:"reporting_divider"`
 	SecurityDivider       any              `json:"security_divider"`
 	StorageAssetPresets   any              `json:"storage_asset_presets"`
 	StorageAssetTransform *string          `json:"storage_asset_transform"`
@@ -3307,9 +3243,13 @@ func (cf *DirectusSettings) UnmarshalJSON(data []byte) error {
 		ProjectName           string           `json:"project_name"`
 		ProjectUrl            *string          `json:"project_url"`
 		PublicBackground      *DirectusFiles   `json:"public_background"`
-		PublicFavicon         *uuid.UUID       `json:"public_favicon"`
+		PublicFavicon         *DirectusFiles   `json:"public_favicon"`
 		PublicForeground      *DirectusFiles   `json:"public_foreground"`
 		PublicNote            *string          `json:"public_note"`
+		ReportBugUrl          *string          `json:"report_bug_url"`
+		ReportErrorUrl        *string          `json:"report_error_url"`
+		ReportFeatureUrl      *string          `json:"report_feature_url"`
+		ReportingDivider      any              `json:"reporting_divider"`
 		SecurityDivider       any              `json:"security_divider"`
 		StorageAssetPresets   any              `json:"storage_asset_presets"`
 		StorageAssetTransform *string          `json:"storage_asset_transform"`
@@ -3353,6 +3293,10 @@ func (cf *DirectusSettings) UnmarshalJSON(data []byte) error {
 		cf.PublicFavicon = _obj.PublicFavicon
 		cf.PublicForeground = _obj.PublicForeground
 		cf.PublicNote = _obj.PublicNote
+		cf.ReportBugUrl = _obj.ReportBugUrl
+		cf.ReportErrorUrl = _obj.ReportErrorUrl
+		cf.ReportFeatureUrl = _obj.ReportFeatureUrl
+		cf.ReportingDivider = _obj.ReportingDivider
 		cf.SecurityDivider = _obj.SecurityDivider
 		cf.StorageAssetPresets = _obj.StorageAssetPresets
 		cf.StorageAssetTransform = _obj.StorageAssetTransform
@@ -3429,9 +3373,7 @@ func (cf DirectusSettings) DeepCopy() IDirectusObject {
 		new_obj.PublicBackground = (*cf.PublicBackground).DeepCopy().(*DirectusFiles)
 	}
 	if cf.PublicFavicon != nil {
-		temp := uuid.Nil
-		new_obj.PublicFavicon = &temp
-		*new_obj.PublicFavicon = *cf.PublicFavicon
+		new_obj.PublicFavicon = (*cf.PublicFavicon).DeepCopy().(*DirectusFiles)
 	}
 	if cf.PublicForeground != nil {
 		new_obj.PublicForeground = (*cf.PublicForeground).DeepCopy().(*DirectusFiles)
@@ -3441,6 +3383,22 @@ func (cf DirectusSettings) DeepCopy() IDirectusObject {
 		new_obj.PublicNote = &temp
 		*new_obj.PublicNote = *cf.PublicNote
 	}
+	if cf.ReportBugUrl != nil {
+		temp := ""
+		new_obj.ReportBugUrl = &temp
+		*new_obj.ReportBugUrl = *cf.ReportBugUrl
+	}
+	if cf.ReportErrorUrl != nil {
+		temp := ""
+		new_obj.ReportErrorUrl = &temp
+		*new_obj.ReportErrorUrl = *cf.ReportErrorUrl
+	}
+	if cf.ReportFeatureUrl != nil {
+		temp := ""
+		new_obj.ReportFeatureUrl = &temp
+		*new_obj.ReportFeatureUrl = *cf.ReportFeatureUrl
+	}
+	new_obj.ReportingDivider = cf.ReportingDivider
 	new_obj.SecurityDivider = cf.SecurityDivider
 	new_obj.StorageAssetPresets = cf.StorageAssetPresets
 	if cf.StorageAssetTransform != nil {
@@ -3617,20 +3575,6 @@ func (cf DirectusSettings) Diff(old IDirectusObject) map[string]interface{} {
 		}
 	}
 
-	if cf.PublicFavicon == nil {
-		if old.(*DirectusSettings).PublicFavicon != nil {
-			diff["public_favicon"] = nil
-		}
-	} else {
-		if old.(*DirectusSettings).PublicFavicon == nil {
-			diff["public_favicon"] = cf.PublicFavicon
-		} else {
-			if *cf.PublicFavicon != *old.(*DirectusSettings).PublicFavicon {
-				diff["public_favicon"] = cf.PublicFavicon
-			}
-		}
-	}
-
 	if cf.PublicNote == nil {
 		if old.(*DirectusSettings).PublicNote != nil {
 			diff["public_note"] = nil
@@ -3643,6 +3587,49 @@ func (cf DirectusSettings) Diff(old IDirectusObject) map[string]interface{} {
 				diff["public_note"] = cf.PublicNote
 			}
 		}
+	}
+	if cf.ReportBugUrl == nil {
+		if old.(*DirectusSettings).ReportBugUrl != nil {
+			diff["report_bug_url"] = nil
+		}
+	} else {
+		if old.(*DirectusSettings).ReportBugUrl == nil {
+			diff["report_bug_url"] = cf.ReportBugUrl
+		} else {
+			if *cf.ReportBugUrl != *old.(*DirectusSettings).ReportBugUrl {
+				diff["report_bug_url"] = cf.ReportBugUrl
+			}
+		}
+	}
+	if cf.ReportErrorUrl == nil {
+		if old.(*DirectusSettings).ReportErrorUrl != nil {
+			diff["report_error_url"] = nil
+		}
+	} else {
+		if old.(*DirectusSettings).ReportErrorUrl == nil {
+			diff["report_error_url"] = cf.ReportErrorUrl
+		} else {
+			if *cf.ReportErrorUrl != *old.(*DirectusSettings).ReportErrorUrl {
+				diff["report_error_url"] = cf.ReportErrorUrl
+			}
+		}
+	}
+	if cf.ReportFeatureUrl == nil {
+		if old.(*DirectusSettings).ReportFeatureUrl != nil {
+			diff["report_feature_url"] = nil
+		}
+	} else {
+		if old.(*DirectusSettings).ReportFeatureUrl == nil {
+			diff["report_feature_url"] = cf.ReportFeatureUrl
+		} else {
+			if *cf.ReportFeatureUrl != *old.(*DirectusSettings).ReportFeatureUrl {
+				diff["report_feature_url"] = cf.ReportFeatureUrl
+			}
+		}
+	}
+
+	if cf.ReportingDivider != old.(*DirectusSettings).ReportingDivider {
+		diff["reporting_divider"] = cf.ReportingDivider
 	}
 
 	if cf.SecurityDivider != old.(*DirectusSettings).SecurityDivider {
@@ -3713,9 +3700,11 @@ func (cf DirectusSettings) Map() map[string]interface{} {
 	mp["project_name"] = cf.ProjectName
 	mp["project_url"] = cf.ProjectUrl
 
-	mp["public_favicon"] = cf.PublicFavicon
-
 	mp["public_note"] = cf.PublicNote
+	mp["report_bug_url"] = cf.ReportBugUrl
+	mp["report_error_url"] = cf.ReportErrorUrl
+	mp["report_feature_url"] = cf.ReportFeatureUrl
+	mp["reporting_divider"] = cf.ReportingDivider
 	mp["security_divider"] = cf.SecurityDivider
 	mp["storage_asset_presets"] = cf.StorageAssetPresets
 	mp["storage_asset_transform"] = cf.StorageAssetTransform
@@ -3742,7 +3731,10 @@ func (cf DirectusSettings) Track() []IDirectusObject {
 		trakingList = append(trakingList, cf.PublicBackground)
 		trakingList = append(trakingList, cf.PublicBackground.Track()...)
 	}
-
+	if cf.PublicFavicon != nil {
+		trakingList = append(trakingList, cf.PublicFavicon)
+		trakingList = append(trakingList, cf.PublicFavicon.Track()...)
+	}
 	if cf.PublicForeground != nil {
 		trakingList = append(trakingList, cf.PublicForeground)
 		trakingList = append(trakingList, cf.PublicForeground.Track()...)
@@ -4125,6 +4117,7 @@ type DirectusUsers struct {
 	Role                *DirectusRoles `json:"role"`
 	Status              string         `json:"status"`
 	Tags                any            `json:"tags"`
+	TelegramChatId      *string        `json:"telegram_chat_id"`
 	TfaSecret           *string        `json:"tfa_secret"`
 	ThemeDark           *string        `json:"theme_dark"`
 	ThemeDarkOverrides  any            `json:"theme_dark_overrides"`
@@ -4158,6 +4151,7 @@ func (cf *DirectusUsers) UnmarshalJSON(data []byte) error {
 		Role                *DirectusRoles `json:"role"`
 		Status              string         `json:"status"`
 		Tags                any            `json:"tags"`
+		TelegramChatId      *string        `json:"telegram_chat_id"`
 		TfaSecret           *string        `json:"tfa_secret"`
 		ThemeDark           *string        `json:"theme_dark"`
 		ThemeDarkOverrides  any            `json:"theme_dark_overrides"`
@@ -4196,6 +4190,7 @@ func (cf *DirectusUsers) UnmarshalJSON(data []byte) error {
 		cf.Role = _obj.Role
 		cf.Status = _obj.Status
 		cf.Tags = _obj.Tags
+		cf.TelegramChatId = _obj.TelegramChatId
 		cf.TfaSecret = _obj.TfaSecret
 		cf.ThemeDark = _obj.ThemeDark
 		cf.ThemeDarkOverrides = _obj.ThemeDarkOverrides
@@ -4285,6 +4280,11 @@ func (cf DirectusUsers) DeepCopy() IDirectusObject {
 	}
 	new_obj.Status = cf.Status
 	new_obj.Tags = cf.Tags
+	if cf.TelegramChatId != nil {
+		temp := ""
+		new_obj.TelegramChatId = &temp
+		*new_obj.TelegramChatId = *cf.TelegramChatId
+	}
 	if cf.TfaSecret != nil {
 		temp := ""
 		new_obj.TfaSecret = &temp
@@ -4502,6 +4502,19 @@ func (cf DirectusUsers) Diff(old IDirectusObject) map[string]interface{} {
 	if cf.Tags != old.(*DirectusUsers).Tags {
 		diff["tags"] = cf.Tags
 	}
+	if cf.TelegramChatId == nil {
+		if old.(*DirectusUsers).TelegramChatId != nil {
+			diff["telegram_chat_id"] = nil
+		}
+	} else {
+		if old.(*DirectusUsers).TelegramChatId == nil {
+			diff["telegram_chat_id"] = cf.TelegramChatId
+		} else {
+			if *cf.TelegramChatId != *old.(*DirectusUsers).TelegramChatId {
+				diff["telegram_chat_id"] = cf.TelegramChatId
+			}
+		}
+	}
 	if cf.TfaSecret == nil {
 		if old.(*DirectusUsers).TfaSecret != nil {
 			diff["tfa_secret"] = nil
@@ -4609,6 +4622,7 @@ func (cf DirectusUsers) Map() map[string]interface{} {
 
 	mp["status"] = cf.Status
 	mp["tags"] = cf.Tags
+	mp["telegram_chat_id"] = cf.TelegramChatId
 	mp["tfa_secret"] = cf.TfaSecret
 	mp["theme_dark"] = cf.ThemeDark
 	mp["theme_dark_overrides"] = cf.ThemeDarkOverrides
@@ -4837,30 +4851,34 @@ func (cf DirectusVersions) CollectionName() string {
 
 type DirectusWebhooks struct {
 	IDirectusObject
-	Actions         any    `json:"actions"`
-	Collections     any    `json:"collections"`
-	Data            bool   `json:"data"`
-	Headers         any    `json:"headers"`
-	Id              int    `json:"id"`
-	Method          string `json:"method"`
-	Name            string `json:"name"`
-	Status          string `json:"status"`
-	TriggersDivider any    `json:"triggers_divider"`
-	Url             string `json:"url"`
+	Actions                    any        `json:"actions"`
+	Collections                any        `json:"collections"`
+	Data                       bool       `json:"data"`
+	Headers                    any        `json:"headers"`
+	Id                         int        `json:"id"`
+	Method                     string     `json:"method"`
+	MigratedFlow               *uuid.UUID `json:"migrated_flow"`
+	Name                       string     `json:"name"`
+	Status                     string     `json:"status"`
+	TriggersDivider            any        `json:"triggers_divider"`
+	Url                        string     `json:"url"`
+	WasActiveBeforeDeprecation bool       `json:"was_active_before_deprecation"`
 }
 
 func (cf *DirectusWebhooks) UnmarshalJSON(data []byte) error {
 	type directuswebhooks_internal struct {
-		Actions         any    `json:"actions"`
-		Collections     any    `json:"collections"`
-		Data            bool   `json:"data"`
-		Headers         any    `json:"headers"`
-		Id              int    `json:"id"`
-		Method          string `json:"method"`
-		Name            string `json:"name"`
-		Status          string `json:"status"`
-		TriggersDivider any    `json:"triggers_divider"`
-		Url             string `json:"url"`
+		Actions                    any        `json:"actions"`
+		Collections                any        `json:"collections"`
+		Data                       bool       `json:"data"`
+		Headers                    any        `json:"headers"`
+		Id                         int        `json:"id"`
+		Method                     string     `json:"method"`
+		MigratedFlow               *uuid.UUID `json:"migrated_flow"`
+		Name                       string     `json:"name"`
+		Status                     string     `json:"status"`
+		TriggersDivider            any        `json:"triggers_divider"`
+		Url                        string     `json:"url"`
+		WasActiveBeforeDeprecation bool       `json:"was_active_before_deprecation"`
 	}
 	if data[0] == '"' { //Data is a string
 		return json.Unmarshal(data, &cf.Id)
@@ -4876,10 +4894,12 @@ func (cf *DirectusWebhooks) UnmarshalJSON(data []byte) error {
 		cf.Headers = _obj.Headers
 		cf.Id = _obj.Id
 		cf.Method = _obj.Method
+		cf.MigratedFlow = _obj.MigratedFlow
 		cf.Name = _obj.Name
 		cf.Status = _obj.Status
 		cf.TriggersDivider = _obj.TriggersDivider
 		cf.Url = _obj.Url
+		cf.WasActiveBeforeDeprecation = _obj.WasActiveBeforeDeprecation
 	} else {
 		//Number or unkown, probably id
 		return json.Unmarshal(data, &cf.Id)
@@ -4894,10 +4914,16 @@ func (cf DirectusWebhooks) DeepCopy() IDirectusObject {
 	new_obj.Headers = cf.Headers
 	new_obj.Id = cf.Id
 	new_obj.Method = cf.Method
+	if cf.MigratedFlow != nil {
+		temp := uuid.Nil
+		new_obj.MigratedFlow = &temp
+		*new_obj.MigratedFlow = *cf.MigratedFlow
+	}
 	new_obj.Name = cf.Name
 	new_obj.Status = cf.Status
 	new_obj.TriggersDivider = cf.TriggersDivider
 	new_obj.Url = cf.Url
+	new_obj.WasActiveBeforeDeprecation = cf.WasActiveBeforeDeprecation
 	return new_obj
 }
 func (cf DirectusWebhooks) Diff(old IDirectusObject) map[string]interface{} {
@@ -4926,6 +4952,19 @@ func (cf DirectusWebhooks) Diff(old IDirectusObject) map[string]interface{} {
 	if cf.Method != old.(*DirectusWebhooks).Method {
 		diff["method"] = cf.Method
 	}
+	if cf.MigratedFlow == nil {
+		if old.(*DirectusWebhooks).MigratedFlow != nil {
+			diff["migrated_flow"] = nil
+		}
+	} else {
+		if old.(*DirectusWebhooks).MigratedFlow == nil {
+			diff["migrated_flow"] = cf.MigratedFlow
+		} else {
+			if *cf.MigratedFlow != *old.(*DirectusWebhooks).MigratedFlow {
+				diff["migrated_flow"] = cf.MigratedFlow
+			}
+		}
+	}
 
 	if cf.Name != old.(*DirectusWebhooks).Name {
 		diff["name"] = cf.Name
@@ -4943,6 +4982,10 @@ func (cf DirectusWebhooks) Diff(old IDirectusObject) map[string]interface{} {
 		diff["url"] = cf.Url
 	}
 
+	if cf.WasActiveBeforeDeprecation != old.(*DirectusWebhooks).WasActiveBeforeDeprecation {
+		diff["was_active_before_deprecation"] = cf.WasActiveBeforeDeprecation
+	}
+
 	if len(diff) == 0 {
 		return nil
 	}
@@ -4957,10 +5000,12 @@ func (cf DirectusWebhooks) Map() map[string]interface{} {
 	mp["headers"] = cf.Headers
 	mp["id"] = cf.Id
 	mp["method"] = cf.Method
+	mp["migrated_flow"] = cf.MigratedFlow
 	mp["name"] = cf.Name
 	mp["status"] = cf.Status
 	mp["triggers_divider"] = cf.TriggersDivider
 	mp["url"] = cf.Url
+	mp["was_active_before_deprecation"] = cf.WasActiveBeforeDeprecation
 
 	if len(mp) == 0 {
 		return nil
@@ -4979,103 +5024,315 @@ func (cf DirectusWebhooks) CollectionName() string {
 	return "directus_webhooks"
 }
 
-type ExternalFiles struct {
+type Location struct {
 	IDirectusObject
-	Bucket      string         `json:"bucket"`
-	DateCreated *time.Time     `json:"date_created"`
-	Fileext     *string        `json:"fileext"`
-	Filehash    string         `json:"filehash"`
-	Id          uuid.UUID      `json:"id"`
-	UserCreated *DirectusUsers `json:"user_created"`
+	Code string    `json:"code"`
+	Id   uuid.UUID `json:"id"`
+	Name string    `json:"name"`
 }
 
-func (cf *ExternalFiles) UnmarshalJSON(data []byte) error {
-	type externalfiles_internal struct {
-		Bucket      string         `json:"bucket"`
-		DateCreated *time.Time     `json:"date_created"`
-		Fileext     *string        `json:"fileext"`
-		Filehash    string         `json:"filehash"`
-		Id          uuid.UUID      `json:"id"`
-		UserCreated *DirectusUsers `json:"user_created"`
+func (cf *Location) UnmarshalJSON(data []byte) error {
+	type location_internal struct {
+		Code string    `json:"code"`
+		Id   uuid.UUID `json:"id"`
+		Name string    `json:"name"`
 	}
 	if data[0] == '"' { //Data is a string
 		return json.Unmarshal(data, &cf.Id)
 	} else if data[0] == '{' { //Data is an object
-		var _obj externalfiles_internal
+		var _obj location_internal
 		err := json.Unmarshal(data, &_obj)
 		if err != nil {
 			return err
 		}
-		cf.Bucket = _obj.Bucket
-		cf.DateCreated = _obj.DateCreated
-		cf.Fileext = _obj.Fileext
-		cf.Filehash = _obj.Filehash
+		cf.Code = _obj.Code
 		cf.Id = _obj.Id
-		cf.UserCreated = _obj.UserCreated
+		cf.Name = _obj.Name
 	} else {
 		//Number or unkown, probably id
 		return json.Unmarshal(data, &cf.Id)
 	}
 	return nil
 }
-func (cf ExternalFiles) DeepCopy() IDirectusObject {
-	new_obj := &ExternalFiles{}
-	new_obj.Bucket = cf.Bucket
+func (cf Location) DeepCopy() IDirectusObject {
+	new_obj := &Location{}
+	new_obj.Code = cf.Code
+	new_obj.Id = cf.Id
+	new_obj.Name = cf.Name
+	return new_obj
+}
+func (cf Location) Diff(old IDirectusObject) map[string]interface{} {
+	diff := make(map[string]interface{})
+
+	if cf.Code != old.(*Location).Code {
+		diff["code"] = cf.Code
+	}
+
+	if cf.Id != old.(*Location).Id {
+		diff["id"] = cf.Id
+	}
+
+	if cf.Name != old.(*Location).Name {
+		diff["name"] = cf.Name
+	}
+
+	if len(diff) == 0 {
+		return nil
+	}
+	return diff
+}
+func (cf Location) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["code"] = cf.Code
+	mp["id"] = cf.Id
+	mp["name"] = cf.Name
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
+func (cf Location) Track() []IDirectusObject {
+	trakingList := make([]IDirectusObject, 0)
+
+	return trakingList
+}
+func (cf Location) GetId() string {
+	return cf.Id.String()
+}
+func (cf Location) CollectionName() string {
+	return "location"
+}
+
+type Product struct {
+	IDirectusObject
+	Description *string   `json:"description"`
+	Duration    int       `json:"duration"`
+	Id          uuid.UUID `json:"id"`
+	Location    *Location `json:"location"`
+	Name        string    `json:"name"`
+	Price       float32   `json:"price"`
+}
+
+func (cf *Product) UnmarshalJSON(data []byte) error {
+	type product_internal struct {
+		Description *string   `json:"description"`
+		Duration    int       `json:"duration"`
+		Id          uuid.UUID `json:"id"`
+		Location    *Location `json:"location"`
+		Name        string    `json:"name"`
+		Price       float32   `json:"price"`
+	}
+	if data[0] == '"' { //Data is a string
+		return json.Unmarshal(data, &cf.Id)
+	} else if data[0] == '{' { //Data is an object
+		var _obj product_internal
+		err := json.Unmarshal(data, &_obj)
+		if err != nil {
+			return err
+		}
+		cf.Description = _obj.Description
+		cf.Duration = _obj.Duration
+		cf.Id = _obj.Id
+		cf.Location = _obj.Location
+		cf.Name = _obj.Name
+		cf.Price = _obj.Price
+	} else {
+		//Number or unkown, probably id
+		return json.Unmarshal(data, &cf.Id)
+	}
+	return nil
+}
+func (cf Product) DeepCopy() IDirectusObject {
+	new_obj := &Product{}
+	if cf.Description != nil {
+		temp := ""
+		new_obj.Description = &temp
+		*new_obj.Description = *cf.Description
+	}
+	new_obj.Duration = cf.Duration
+	new_obj.Id = cf.Id
+	if cf.Location != nil {
+		new_obj.Location = (*cf.Location).DeepCopy().(*Location)
+	}
+	new_obj.Name = cf.Name
+	new_obj.Price = cf.Price
+	return new_obj
+}
+func (cf Product) Diff(old IDirectusObject) map[string]interface{} {
+	diff := make(map[string]interface{})
+
+	if cf.Description == nil {
+		if old.(*Product).Description != nil {
+			diff["description"] = nil
+		}
+	} else {
+		if old.(*Product).Description == nil {
+			diff["description"] = cf.Description
+		} else {
+			if *cf.Description != *old.(*Product).Description {
+				diff["description"] = cf.Description
+			}
+		}
+	}
+
+	if cf.Duration != old.(*Product).Duration {
+		diff["duration"] = cf.Duration
+	}
+
+	if cf.Id != old.(*Product).Id {
+		diff["id"] = cf.Id
+	}
+
+	if cf.Name != old.(*Product).Name {
+		diff["name"] = cf.Name
+	}
+
+	if cf.Price != old.(*Product).Price {
+		diff["price"] = cf.Price
+	}
+
+	if len(diff) == 0 {
+		return nil
+	}
+	return diff
+}
+func (cf Product) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["description"] = cf.Description
+	mp["duration"] = cf.Duration
+	mp["id"] = cf.Id
+
+	mp["name"] = cf.Name
+	mp["price"] = cf.Price
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
+func (cf Product) Track() []IDirectusObject {
+	trakingList := make([]IDirectusObject, 0)
+
+	if cf.Location != nil {
+		trakingList = append(trakingList, cf.Location)
+		trakingList = append(trakingList, cf.Location.Track()...)
+	}
+
+	return trakingList
+}
+func (cf Product) GetId() string {
+	return cf.Id.String()
+}
+func (cf Product) CollectionName() string {
+	return "product"
+}
+
+type Promocode struct {
+	IDirectusObject
+	Code        string         `json:"code"`
+	DateCreated *time.Time     `json:"date_created"`
+	DateUpdated *time.Time     `json:"date_updated"`
+	Discount    float32        `json:"discount"`
+	Id          uuid.UUID      `json:"id"`
+	UserCreated *DirectusUsers `json:"user_created"`
+	UserUpdated *DirectusUsers `json:"user_updated"`
+}
+
+func (cf *Promocode) UnmarshalJSON(data []byte) error {
+	type promocode_internal struct {
+		Code        string         `json:"code"`
+		DateCreated *time.Time     `json:"date_created"`
+		DateUpdated *time.Time     `json:"date_updated"`
+		Discount    float32        `json:"discount"`
+		Id          uuid.UUID      `json:"id"`
+		UserCreated *DirectusUsers `json:"user_created"`
+		UserUpdated *DirectusUsers `json:"user_updated"`
+	}
+	if data[0] == '"' { //Data is a string
+		return json.Unmarshal(data, &cf.Id)
+	} else if data[0] == '{' { //Data is an object
+		var _obj promocode_internal
+		err := json.Unmarshal(data, &_obj)
+		if err != nil {
+			return err
+		}
+		cf.Code = _obj.Code
+		cf.DateCreated = _obj.DateCreated
+		cf.DateUpdated = _obj.DateUpdated
+		cf.Discount = _obj.Discount
+		cf.Id = _obj.Id
+		cf.UserCreated = _obj.UserCreated
+		cf.UserUpdated = _obj.UserUpdated
+	} else {
+		//Number or unkown, probably id
+		return json.Unmarshal(data, &cf.Id)
+	}
+	return nil
+}
+func (cf Promocode) DeepCopy() IDirectusObject {
+	new_obj := &Promocode{}
+	new_obj.Code = cf.Code
 	if cf.DateCreated != nil {
 		temp := time.Time{}
 		new_obj.DateCreated = &temp
 		*new_obj.DateCreated = *cf.DateCreated
 	}
-	if cf.Fileext != nil {
-		temp := ""
-		new_obj.Fileext = &temp
-		*new_obj.Fileext = *cf.Fileext
+	if cf.DateUpdated != nil {
+		temp := time.Time{}
+		new_obj.DateUpdated = &temp
+		*new_obj.DateUpdated = *cf.DateUpdated
 	}
-	new_obj.Filehash = cf.Filehash
+	new_obj.Discount = cf.Discount
 	new_obj.Id = cf.Id
 	if cf.UserCreated != nil {
 		new_obj.UserCreated = (*cf.UserCreated).DeepCopy().(*DirectusUsers)
 	}
+	if cf.UserUpdated != nil {
+		new_obj.UserUpdated = (*cf.UserUpdated).DeepCopy().(*DirectusUsers)
+	}
 	return new_obj
 }
-func (cf ExternalFiles) Diff(old IDirectusObject) map[string]interface{} {
+func (cf Promocode) Diff(old IDirectusObject) map[string]interface{} {
 	diff := make(map[string]interface{})
 
-	if cf.Bucket != old.(*ExternalFiles).Bucket {
-		diff["bucket"] = cf.Bucket
+	if cf.Code != old.(*Promocode).Code {
+		diff["code"] = cf.Code
 	}
 	if cf.DateCreated == nil {
-		if old.(*ExternalFiles).DateCreated != nil {
+		if old.(*Promocode).DateCreated != nil {
 			diff["date_created"] = nil
 		}
 	} else {
-		if old.(*ExternalFiles).DateCreated == nil {
+		if old.(*Promocode).DateCreated == nil {
 			diff["date_created"] = cf.DateCreated
 		} else {
-			if *cf.DateCreated != *old.(*ExternalFiles).DateCreated {
+			if *cf.DateCreated != *old.(*Promocode).DateCreated {
 				diff["date_created"] = cf.DateCreated
 			}
 		}
 	}
-	if cf.Fileext == nil {
-		if old.(*ExternalFiles).Fileext != nil {
-			diff["fileext"] = nil
+	if cf.DateUpdated == nil {
+		if old.(*Promocode).DateUpdated != nil {
+			diff["date_updated"] = nil
 		}
 	} else {
-		if old.(*ExternalFiles).Fileext == nil {
-			diff["fileext"] = cf.Fileext
+		if old.(*Promocode).DateUpdated == nil {
+			diff["date_updated"] = cf.DateUpdated
 		} else {
-			if *cf.Fileext != *old.(*ExternalFiles).Fileext {
-				diff["fileext"] = cf.Fileext
+			if *cf.DateUpdated != *old.(*Promocode).DateUpdated {
+				diff["date_updated"] = cf.DateUpdated
 			}
 		}
 	}
 
-	if cf.Filehash != old.(*ExternalFiles).Filehash {
-		diff["filehash"] = cf.Filehash
+	if cf.Discount != old.(*Promocode).Discount {
+		diff["discount"] = cf.Discount
 	}
 
-	if cf.Id != old.(*ExternalFiles).Id {
+	if cf.Id != old.(*Promocode).Id {
 		diff["id"] = cf.Id
 	}
 
@@ -5084,13 +5341,13 @@ func (cf ExternalFiles) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
-func (cf ExternalFiles) Map() map[string]interface{} {
+func (cf Promocode) Map() map[string]interface{} {
 	mp := make(map[string]interface{})
 
-	mp["bucket"] = cf.Bucket
+	mp["code"] = cf.Code
 	mp["date_created"] = cf.DateCreated
-	mp["fileext"] = cf.Fileext
-	mp["filehash"] = cf.Filehash
+	mp["date_updated"] = cf.DateUpdated
+	mp["discount"] = cf.Discount
 	mp["id"] = cf.Id
 
 	if len(mp) == 0 {
@@ -5098,128 +5355,325 @@ func (cf ExternalFiles) Map() map[string]interface{} {
 	}
 	return mp
 }
-func (cf ExternalFiles) Track() []IDirectusObject {
+func (cf Promocode) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
 	if cf.UserCreated != nil {
 		trakingList = append(trakingList, cf.UserCreated)
 		trakingList = append(trakingList, cf.UserCreated.Track()...)
 	}
+	if cf.UserUpdated != nil {
+		trakingList = append(trakingList, cf.UserUpdated)
+		trakingList = append(trakingList, cf.UserUpdated.Track()...)
+	}
 	return trakingList
 }
-func (cf ExternalFiles) GetId() string {
+func (cf Promocode) GetId() string {
 	return cf.Id.String()
 }
-func (cf ExternalFiles) CollectionName() string {
-	return "ExternalFiles"
+func (cf Promocode) CollectionName() string {
+	return "promocode"
 }
 
-type GameProjects struct {
+type ProxyServer struct {
 	IDirectusObject
-	Annotation  *string        `json:"annotation"`
-	Balance     float32        `json:"balance"`
-	DateCreated *time.Time     `json:"date_created"`
-	GameServers []GameServers  `json:"GameServers"`
-	Id          uuid.UUID      `json:"id"`
-	Name        string         `json:"name"`
-	UserCreated *DirectusUsers `json:"user_created"`
+	ControllPort int       `json:"controll_port"`
+	Description  *string   `json:"description"`
+	Id           uuid.UUID `json:"id"`
+	Ip           string    `json:"ip"`
+	Location     *Location `json:"location"`
 }
 
-func (cf *GameProjects) UnmarshalJSON(data []byte) error {
-	type gameprojects_internal struct {
-		Annotation  *string        `json:"annotation"`
-		Balance     float32        `json:"balance"`
-		DateCreated *time.Time     `json:"date_created"`
-		GameServers []GameServers  `json:"GameServers"`
-		Id          uuid.UUID      `json:"id"`
-		Name        string         `json:"name"`
-		UserCreated *DirectusUsers `json:"user_created"`
+func (cf *ProxyServer) UnmarshalJSON(data []byte) error {
+	type proxyserver_internal struct {
+		ControllPort int       `json:"controll_port"`
+		Description  *string   `json:"description"`
+		Id           uuid.UUID `json:"id"`
+		Ip           string    `json:"ip"`
+		Location     *Location `json:"location"`
 	}
 	if data[0] == '"' { //Data is a string
 		return json.Unmarshal(data, &cf.Id)
 	} else if data[0] == '{' { //Data is an object
-		var _obj gameprojects_internal
+		var _obj proxyserver_internal
+		err := json.Unmarshal(data, &_obj)
+		if err != nil {
+			return err
+		}
+		cf.ControllPort = _obj.ControllPort
+		cf.Description = _obj.Description
+		cf.Id = _obj.Id
+		cf.Ip = _obj.Ip
+		cf.Location = _obj.Location
+	} else {
+		//Number or unkown, probably id
+		return json.Unmarshal(data, &cf.Id)
+	}
+	return nil
+}
+func (cf ProxyServer) DeepCopy() IDirectusObject {
+	new_obj := &ProxyServer{}
+	new_obj.ControllPort = cf.ControllPort
+	if cf.Description != nil {
+		temp := ""
+		new_obj.Description = &temp
+		*new_obj.Description = *cf.Description
+	}
+	new_obj.Id = cf.Id
+	new_obj.Ip = cf.Ip
+	if cf.Location != nil {
+		new_obj.Location = (*cf.Location).DeepCopy().(*Location)
+	}
+	return new_obj
+}
+func (cf ProxyServer) Diff(old IDirectusObject) map[string]interface{} {
+	diff := make(map[string]interface{})
+
+	if cf.ControllPort != old.(*ProxyServer).ControllPort {
+		diff["controll_port"] = cf.ControllPort
+	}
+	if cf.Description == nil {
+		if old.(*ProxyServer).Description != nil {
+			diff["description"] = nil
+		}
+	} else {
+		if old.(*ProxyServer).Description == nil {
+			diff["description"] = cf.Description
+		} else {
+			if *cf.Description != *old.(*ProxyServer).Description {
+				diff["description"] = cf.Description
+			}
+		}
+	}
+
+	if cf.Id != old.(*ProxyServer).Id {
+		diff["id"] = cf.Id
+	}
+
+	if cf.Ip != old.(*ProxyServer).Ip {
+		diff["ip"] = cf.Ip
+	}
+
+	if len(diff) == 0 {
+		return nil
+	}
+	return diff
+}
+func (cf ProxyServer) Map() map[string]interface{} {
+	mp := make(map[string]interface{})
+
+	mp["controll_port"] = cf.ControllPort
+	mp["description"] = cf.Description
+	mp["id"] = cf.Id
+	mp["ip"] = cf.Ip
+
+	if len(mp) == 0 {
+		return nil
+	}
+	return mp
+}
+func (cf ProxyServer) Track() []IDirectusObject {
+	trakingList := make([]IDirectusObject, 0)
+
+	if cf.Location != nil {
+		trakingList = append(trakingList, cf.Location)
+		trakingList = append(trakingList, cf.Location.Track()...)
+	}
+	return trakingList
+}
+func (cf ProxyServer) GetId() string {
+	return cf.Id.String()
+}
+func (cf ProxyServer) CollectionName() string {
+	return "proxy_server"
+}
+
+type Slot struct {
+	IDirectusObject
+	Annotation     *string        `json:"annotation"`
+	ConnectionPort int            `json:"connection_port"`
+	DateCreated    *time.Time     `json:"date_created"`
+	DateUpdated    *time.Time     `json:"date_updated"`
+	ExpiresAt      time.Time      `json:"expires_at"`
+	Id             uuid.UUID      `json:"id"`
+	PasswordBase64 string         `json:"password_base64"`
+	Product        *Product       `json:"product"`
+	Server         *ProxyServer   `json:"server"`
+	Status         *string        `json:"status"`
+	Transaction    *Transaction   `json:"transaction"`
+	UsedPromocode  *Promocode     `json:"used_promocode"`
+	User           *DirectusUsers `json:"user"`
+	UserCreated    *DirectusUsers `json:"user_created"`
+	UserUpdated    *DirectusUsers `json:"user_updated"`
+}
+
+func (cf *Slot) UnmarshalJSON(data []byte) error {
+	type slot_internal struct {
+		Annotation     *string        `json:"annotation"`
+		ConnectionPort int            `json:"connection_port"`
+		DateCreated    *time.Time     `json:"date_created"`
+		DateUpdated    *time.Time     `json:"date_updated"`
+		ExpiresAt      time.Time      `json:"expires_at"`
+		Id             uuid.UUID      `json:"id"`
+		PasswordBase64 string         `json:"password_base64"`
+		Product        *Product       `json:"product"`
+		Server         *ProxyServer   `json:"server"`
+		Status         *string        `json:"status"`
+		Transaction    *Transaction   `json:"transaction"`
+		UsedPromocode  *Promocode     `json:"used_promocode"`
+		User           *DirectusUsers `json:"user"`
+		UserCreated    *DirectusUsers `json:"user_created"`
+		UserUpdated    *DirectusUsers `json:"user_updated"`
+	}
+	if data[0] == '"' { //Data is a string
+		return json.Unmarshal(data, &cf.Id)
+	} else if data[0] == '{' { //Data is an object
+		var _obj slot_internal
 		err := json.Unmarshal(data, &_obj)
 		if err != nil {
 			return err
 		}
 		cf.Annotation = _obj.Annotation
-		cf.Balance = _obj.Balance
+		cf.ConnectionPort = _obj.ConnectionPort
 		cf.DateCreated = _obj.DateCreated
-		cf.GameServers = _obj.GameServers
+		cf.DateUpdated = _obj.DateUpdated
+		cf.ExpiresAt = _obj.ExpiresAt
 		cf.Id = _obj.Id
-		cf.Name = _obj.Name
+		cf.PasswordBase64 = _obj.PasswordBase64
+		cf.Product = _obj.Product
+		cf.Server = _obj.Server
+		cf.Status = _obj.Status
+		cf.Transaction = _obj.Transaction
+		cf.UsedPromocode = _obj.UsedPromocode
+		cf.User = _obj.User
 		cf.UserCreated = _obj.UserCreated
+		cf.UserUpdated = _obj.UserUpdated
 	} else {
 		//Number or unkown, probably id
 		return json.Unmarshal(data, &cf.Id)
 	}
 	return nil
 }
-func (cf GameProjects) DeepCopy() IDirectusObject {
-	new_obj := &GameProjects{}
+func (cf Slot) DeepCopy() IDirectusObject {
+	new_obj := &Slot{}
 	if cf.Annotation != nil {
 		temp := ""
 		new_obj.Annotation = &temp
 		*new_obj.Annotation = *cf.Annotation
 	}
-	new_obj.Balance = cf.Balance
+	new_obj.ConnectionPort = cf.ConnectionPort
 	if cf.DateCreated != nil {
 		temp := time.Time{}
 		new_obj.DateCreated = &temp
 		*new_obj.DateCreated = *cf.DateCreated
 	}
-	if cf.GameServers != nil {
-		new_obj.GameServers = make([]GameServers, len(cf.GameServers))
-		copy(new_obj.GameServers, cf.GameServers)
+	if cf.DateUpdated != nil {
+		temp := time.Time{}
+		new_obj.DateUpdated = &temp
+		*new_obj.DateUpdated = *cf.DateUpdated
 	}
+	new_obj.ExpiresAt = cf.ExpiresAt
 	new_obj.Id = cf.Id
-	new_obj.Name = cf.Name
+	new_obj.PasswordBase64 = cf.PasswordBase64
+	if cf.Product != nil {
+		new_obj.Product = (*cf.Product).DeepCopy().(*Product)
+	}
+	if cf.Server != nil {
+		new_obj.Server = (*cf.Server).DeepCopy().(*ProxyServer)
+	}
+	if cf.Status != nil {
+		temp := ""
+		new_obj.Status = &temp
+		*new_obj.Status = *cf.Status
+	}
+	if cf.Transaction != nil {
+		new_obj.Transaction = (*cf.Transaction).DeepCopy().(*Transaction)
+	}
+	if cf.UsedPromocode != nil {
+		new_obj.UsedPromocode = (*cf.UsedPromocode).DeepCopy().(*Promocode)
+	}
+	if cf.User != nil {
+		new_obj.User = (*cf.User).DeepCopy().(*DirectusUsers)
+	}
 	if cf.UserCreated != nil {
 		new_obj.UserCreated = (*cf.UserCreated).DeepCopy().(*DirectusUsers)
 	}
+	if cf.UserUpdated != nil {
+		new_obj.UserUpdated = (*cf.UserUpdated).DeepCopy().(*DirectusUsers)
+	}
 	return new_obj
 }
-func (cf GameProjects) Diff(old IDirectusObject) map[string]interface{} {
+func (cf Slot) Diff(old IDirectusObject) map[string]interface{} {
 	diff := make(map[string]interface{})
 
 	if cf.Annotation == nil {
-		if old.(*GameProjects).Annotation != nil {
+		if old.(*Slot).Annotation != nil {
 			diff["annotation"] = nil
 		}
 	} else {
-		if old.(*GameProjects).Annotation == nil {
+		if old.(*Slot).Annotation == nil {
 			diff["annotation"] = cf.Annotation
 		} else {
-			if *cf.Annotation != *old.(*GameProjects).Annotation {
+			if *cf.Annotation != *old.(*Slot).Annotation {
 				diff["annotation"] = cf.Annotation
 			}
 		}
 	}
 
-	if cf.Balance != old.(*GameProjects).Balance {
-		diff["balance"] = cf.Balance
+	if cf.ConnectionPort != old.(*Slot).ConnectionPort {
+		diff["connection_port"] = cf.ConnectionPort
 	}
 	if cf.DateCreated == nil {
-		if old.(*GameProjects).DateCreated != nil {
+		if old.(*Slot).DateCreated != nil {
 			diff["date_created"] = nil
 		}
 	} else {
-		if old.(*GameProjects).DateCreated == nil {
+		if old.(*Slot).DateCreated == nil {
 			diff["date_created"] = cf.DateCreated
 		} else {
-			if *cf.DateCreated != *old.(*GameProjects).DateCreated {
+			if *cf.DateCreated != *old.(*Slot).DateCreated {
 				diff["date_created"] = cf.DateCreated
 			}
 		}
 	}
+	if cf.DateUpdated == nil {
+		if old.(*Slot).DateUpdated != nil {
+			diff["date_updated"] = nil
+		}
+	} else {
+		if old.(*Slot).DateUpdated == nil {
+			diff["date_updated"] = cf.DateUpdated
+		} else {
+			if *cf.DateUpdated != *old.(*Slot).DateUpdated {
+				diff["date_updated"] = cf.DateUpdated
+			}
+		}
+	}
 
-	if cf.Id != old.(*GameProjects).Id {
+	if cf.ExpiresAt != old.(*Slot).ExpiresAt {
+		diff["expires_at"] = cf.ExpiresAt
+	}
+
+	if cf.Id != old.(*Slot).Id {
 		diff["id"] = cf.Id
 	}
 
-	if cf.Name != old.(*GameProjects).Name {
-		diff["name"] = cf.Name
+	if cf.PasswordBase64 != old.(*Slot).PasswordBase64 {
+		diff["password_base64"] = cf.PasswordBase64
+	}
+
+	if cf.Status == nil {
+		if old.(*Slot).Status != nil {
+			diff["status"] = nil
+		}
+	} else {
+		if old.(*Slot).Status == nil {
+			diff["status"] = cf.Status
+		} else {
+			if *cf.Status != *old.(*Slot).Status {
+				diff["status"] = cf.Status
+			}
+		}
 	}
 
 	if len(diff) == 0 {
@@ -5227,1450 +5681,106 @@ func (cf GameProjects) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
-func (cf GameProjects) Map() map[string]interface{} {
+func (cf Slot) Map() map[string]interface{} {
 	mp := make(map[string]interface{})
 
 	mp["annotation"] = cf.Annotation
-	mp["balance"] = cf.Balance
+	mp["connection_port"] = cf.ConnectionPort
 	mp["date_created"] = cf.DateCreated
-
+	mp["date_updated"] = cf.DateUpdated
+	mp["expires_at"] = cf.ExpiresAt
 	mp["id"] = cf.Id
-	mp["name"] = cf.Name
+	mp["password_base64"] = cf.PasswordBase64
+
+	mp["status"] = cf.Status
 
 	if len(mp) == 0 {
 		return nil
 	}
 	return mp
 }
-func (cf GameProjects) Track() []IDirectusObject {
+func (cf Slot) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
 
-	if cf.GameServers != nil {
-		for _, iter := range cf.GameServers {
-			trakingList = append(trakingList, iter.Track()...)
-		}
+	if cf.Product != nil {
+		trakingList = append(trakingList, cf.Product)
+		trakingList = append(trakingList, cf.Product.Track()...)
+	}
+	if cf.Server != nil {
+		trakingList = append(trakingList, cf.Server)
+		trakingList = append(trakingList, cf.Server.Track()...)
 	}
 
+	if cf.Transaction != nil {
+		trakingList = append(trakingList, cf.Transaction)
+		trakingList = append(trakingList, cf.Transaction.Track()...)
+	}
+	if cf.UsedPromocode != nil {
+		trakingList = append(trakingList, cf.UsedPromocode)
+		trakingList = append(trakingList, cf.UsedPromocode.Track()...)
+	}
+	if cf.User != nil {
+		trakingList = append(trakingList, cf.User)
+		trakingList = append(trakingList, cf.User.Track()...)
+	}
 	if cf.UserCreated != nil {
 		trakingList = append(trakingList, cf.UserCreated)
 		trakingList = append(trakingList, cf.UserCreated.Track()...)
 	}
+	if cf.UserUpdated != nil {
+		trakingList = append(trakingList, cf.UserUpdated)
+		trakingList = append(trakingList, cf.UserUpdated.Track()...)
+	}
 	return trakingList
 }
-func (cf GameProjects) GetId() string {
+func (cf Slot) GetId() string {
 	return cf.Id.String()
 }
-func (cf GameProjects) CollectionName() string {
-	return "GameProjects"
+func (cf Slot) CollectionName() string {
+	return "slot"
 }
 
-type GameServers struct {
-	IDirectusObject
-	Address            *string                 `json:"address"`
-	DateCreated        *time.Time              `json:"date_created"`
-	Id                 uuid.UUID               `json:"id"`
-	Moderators         []GameServersModerators `json:"moderators"`
-	Name               string                  `json:"name"`
-	Project            *GameProjects           `json:"project"`
-	ServerToken        *string                 `json:"server_token"`
-	ServerChatMessages []ServerChatMessages    `json:"ServerChatMessages"`
-	ServerPlayers      []ServerPlayers         `json:"ServerPlayers"`
-	UserCreated        *DirectusUsers          `json:"user_created"`
-}
-
-func (cf *GameServers) UnmarshalJSON(data []byte) error {
-	type gameservers_internal struct {
-		Address            *string                 `json:"address"`
-		DateCreated        *time.Time              `json:"date_created"`
-		Id                 uuid.UUID               `json:"id"`
-		Moderators         []GameServersModerators `json:"moderators"`
-		Name               string                  `json:"name"`
-		Project            *GameProjects           `json:"project"`
-		ServerToken        *string                 `json:"server_token"`
-		ServerChatMessages []ServerChatMessages    `json:"ServerChatMessages"`
-		ServerPlayers      []ServerPlayers         `json:"ServerPlayers"`
-		UserCreated        *DirectusUsers          `json:"user_created"`
-	}
-	if data[0] == '"' { //Data is a string
-		return json.Unmarshal(data, &cf.Id)
-	} else if data[0] == '{' { //Data is an object
-		var _obj gameservers_internal
-		err := json.Unmarshal(data, &_obj)
-		if err != nil {
-			return err
-		}
-		cf.Address = _obj.Address
-		cf.DateCreated = _obj.DateCreated
-		cf.Id = _obj.Id
-		cf.Moderators = _obj.Moderators
-		cf.Name = _obj.Name
-		cf.Project = _obj.Project
-		cf.ServerToken = _obj.ServerToken
-		cf.ServerChatMessages = _obj.ServerChatMessages
-		cf.ServerPlayers = _obj.ServerPlayers
-		cf.UserCreated = _obj.UserCreated
-	} else {
-		//Number or unkown, probably id
-		return json.Unmarshal(data, &cf.Id)
-	}
-	return nil
-}
-func (cf GameServers) DeepCopy() IDirectusObject {
-	new_obj := &GameServers{}
-	if cf.Address != nil {
-		temp := ""
-		new_obj.Address = &temp
-		*new_obj.Address = *cf.Address
-	}
-	if cf.DateCreated != nil {
-		temp := time.Time{}
-		new_obj.DateCreated = &temp
-		*new_obj.DateCreated = *cf.DateCreated
-	}
-	new_obj.Id = cf.Id
-	if cf.Moderators != nil {
-		new_obj.Moderators = make([]GameServersModerators, len(cf.Moderators))
-		copy(new_obj.Moderators, cf.Moderators)
-	}
-	new_obj.Name = cf.Name
-	if cf.Project != nil {
-		new_obj.Project = (*cf.Project).DeepCopy().(*GameProjects)
-	}
-	if cf.ServerToken != nil {
-		temp := ""
-		new_obj.ServerToken = &temp
-		*new_obj.ServerToken = *cf.ServerToken
-	}
-	if cf.ServerChatMessages != nil {
-		new_obj.ServerChatMessages = make([]ServerChatMessages, len(cf.ServerChatMessages))
-		copy(new_obj.ServerChatMessages, cf.ServerChatMessages)
-	}
-	if cf.ServerPlayers != nil {
-		new_obj.ServerPlayers = make([]ServerPlayers, len(cf.ServerPlayers))
-		copy(new_obj.ServerPlayers, cf.ServerPlayers)
-	}
-	if cf.UserCreated != nil {
-		new_obj.UserCreated = (*cf.UserCreated).DeepCopy().(*DirectusUsers)
-	}
-	return new_obj
-}
-func (cf GameServers) Diff(old IDirectusObject) map[string]interface{} {
-	diff := make(map[string]interface{})
-
-	if cf.Address == nil {
-		if old.(*GameServers).Address != nil {
-			diff["address"] = nil
-		}
-	} else {
-		if old.(*GameServers).Address == nil {
-			diff["address"] = cf.Address
-		} else {
-			if *cf.Address != *old.(*GameServers).Address {
-				diff["address"] = cf.Address
-			}
-		}
-	}
-	if cf.DateCreated == nil {
-		if old.(*GameServers).DateCreated != nil {
-			diff["date_created"] = nil
-		}
-	} else {
-		if old.(*GameServers).DateCreated == nil {
-			diff["date_created"] = cf.DateCreated
-		} else {
-			if *cf.DateCreated != *old.(*GameServers).DateCreated {
-				diff["date_created"] = cf.DateCreated
-			}
-		}
-	}
-
-	if cf.Id != old.(*GameServers).Id {
-		diff["id"] = cf.Id
-	}
-
-	if cf.Name != old.(*GameServers).Name {
-		diff["name"] = cf.Name
-	}
-
-	if cf.ServerToken == nil {
-		if old.(*GameServers).ServerToken != nil {
-			diff["server_token"] = nil
-		}
-	} else {
-		if old.(*GameServers).ServerToken == nil {
-			diff["server_token"] = cf.ServerToken
-		} else {
-			if *cf.ServerToken != *old.(*GameServers).ServerToken {
-				diff["server_token"] = cf.ServerToken
-			}
-		}
-	}
-
-	if len(diff) == 0 {
-		return nil
-	}
-	return diff
-}
-func (cf GameServers) Map() map[string]interface{} {
-	mp := make(map[string]interface{})
-
-	mp["address"] = cf.Address
-	mp["date_created"] = cf.DateCreated
-	mp["id"] = cf.Id
-
-	mp["name"] = cf.Name
-
-	mp["server_token"] = cf.ServerToken
-
-	if len(mp) == 0 {
-		return nil
-	}
-	return mp
-}
-func (cf GameServers) Track() []IDirectusObject {
-	trakingList := make([]IDirectusObject, 0)
-
-	if cf.Moderators != nil {
-		for _, iter := range cf.Moderators {
-			trakingList = append(trakingList, iter.Track()...)
-		}
-	}
-
-	if cf.Project != nil {
-		trakingList = append(trakingList, cf.Project)
-		trakingList = append(trakingList, cf.Project.Track()...)
-	}
-
-	if cf.ServerChatMessages != nil {
-		for _, iter := range cf.ServerChatMessages {
-			trakingList = append(trakingList, iter.Track()...)
-		}
-	}
-
-	if cf.ServerPlayers != nil {
-		for _, iter := range cf.ServerPlayers {
-			trakingList = append(trakingList, iter.Track()...)
-		}
-	}
-
-	if cf.UserCreated != nil {
-		trakingList = append(trakingList, cf.UserCreated)
-		trakingList = append(trakingList, cf.UserCreated.Track()...)
-	}
-	return trakingList
-}
-func (cf GameServers) GetId() string {
-	return cf.Id.String()
-}
-func (cf GameServers) CollectionName() string {
-	return "GameServers"
-}
-
-type GameServersModerators struct {
-	IDirectusObject
-	DirectusUsersId *DirectusUsers `json:"directus_users_id"`
-	GameServersId   *GameServers   `json:"GameServers_id"`
-	Id              int            `json:"id"`
-}
-
-func (cf *GameServersModerators) UnmarshalJSON(data []byte) error {
-	type gameserversmoderators_internal struct {
-		DirectusUsersId *DirectusUsers `json:"directus_users_id"`
-		GameServersId   *GameServers   `json:"GameServers_id"`
-		Id              int            `json:"id"`
-	}
-	if data[0] == '"' { //Data is a string
-		return json.Unmarshal(data, &cf.Id)
-	} else if data[0] == '{' { //Data is an object
-		var _obj gameserversmoderators_internal
-		err := json.Unmarshal(data, &_obj)
-		if err != nil {
-			return err
-		}
-		cf.DirectusUsersId = _obj.DirectusUsersId
-		cf.GameServersId = _obj.GameServersId
-		cf.Id = _obj.Id
-	} else {
-		//Number or unkown, probably id
-		return json.Unmarshal(data, &cf.Id)
-	}
-	return nil
-}
-func (cf GameServersModerators) DeepCopy() IDirectusObject {
-	new_obj := &GameServersModerators{}
-	if cf.DirectusUsersId != nil {
-		new_obj.DirectusUsersId = (*cf.DirectusUsersId).DeepCopy().(*DirectusUsers)
-	}
-	if cf.GameServersId != nil {
-		new_obj.GameServersId = (*cf.GameServersId).DeepCopy().(*GameServers)
-	}
-	new_obj.Id = cf.Id
-	return new_obj
-}
-func (cf GameServersModerators) Diff(old IDirectusObject) map[string]interface{} {
-	diff := make(map[string]interface{})
-
-	if cf.Id != old.(*GameServersModerators).Id {
-		diff["id"] = cf.Id
-	}
-
-	if len(diff) == 0 {
-		return nil
-	}
-	return diff
-}
-func (cf GameServersModerators) Map() map[string]interface{} {
-	mp := make(map[string]interface{})
-
-	mp["id"] = cf.Id
-
-	if len(mp) == 0 {
-		return nil
-	}
-	return mp
-}
-func (cf GameServersModerators) Track() []IDirectusObject {
-	trakingList := make([]IDirectusObject, 0)
-
-	if cf.DirectusUsersId != nil {
-		trakingList = append(trakingList, cf.DirectusUsersId)
-		trakingList = append(trakingList, cf.DirectusUsersId.Track()...)
-	}
-	if cf.GameServersId != nil {
-		trakingList = append(trakingList, cf.GameServersId)
-		trakingList = append(trakingList, cf.GameServersId.Track()...)
-	}
-
-	return trakingList
-}
-func (cf GameServersModerators) GetId() string {
-	return fmt.Sprintf("%d", cf.Id)
-}
-func (cf GameServersModerators) CollectionName() string {
-	return "GameServers_Moderators"
-}
-
-type KnownIps struct {
-	IDirectusObject
-	DateCreated *time.Time   `json:"date_created"`
-	Id          uuid.UUID    `json:"id"`
-	Ip          string       `json:"ip"`
-	Location    string       `json:"location"`
-	SteamUsers  []SteamUsers `json:"SteamUsers"`
-}
-
-func (cf *KnownIps) UnmarshalJSON(data []byte) error {
-	type knownips_internal struct {
-		DateCreated *time.Time   `json:"date_created"`
-		Id          uuid.UUID    `json:"id"`
-		Ip          string       `json:"ip"`
-		Location    string       `json:"location"`
-		SteamUsers  []SteamUsers `json:"SteamUsers"`
-	}
-	if data[0] == '"' { //Data is a string
-		return json.Unmarshal(data, &cf.Id)
-	} else if data[0] == '{' { //Data is an object
-		var _obj knownips_internal
-		err := json.Unmarshal(data, &_obj)
-		if err != nil {
-			return err
-		}
-		cf.DateCreated = _obj.DateCreated
-		cf.Id = _obj.Id
-		cf.Ip = _obj.Ip
-		cf.Location = _obj.Location
-		cf.SteamUsers = _obj.SteamUsers
-	} else {
-		//Number or unkown, probably id
-		return json.Unmarshal(data, &cf.Id)
-	}
-	return nil
-}
-func (cf KnownIps) DeepCopy() IDirectusObject {
-	new_obj := &KnownIps{}
-	if cf.DateCreated != nil {
-		temp := time.Time{}
-		new_obj.DateCreated = &temp
-		*new_obj.DateCreated = *cf.DateCreated
-	}
-	new_obj.Id = cf.Id
-	new_obj.Ip = cf.Ip
-	new_obj.Location = cf.Location
-	if cf.SteamUsers != nil {
-		new_obj.SteamUsers = make([]SteamUsers, len(cf.SteamUsers))
-		copy(new_obj.SteamUsers, cf.SteamUsers)
-	}
-	return new_obj
-}
-func (cf KnownIps) Diff(old IDirectusObject) map[string]interface{} {
-	diff := make(map[string]interface{})
-
-	if cf.DateCreated == nil {
-		if old.(*KnownIps).DateCreated != nil {
-			diff["date_created"] = nil
-		}
-	} else {
-		if old.(*KnownIps).DateCreated == nil {
-			diff["date_created"] = cf.DateCreated
-		} else {
-			if *cf.DateCreated != *old.(*KnownIps).DateCreated {
-				diff["date_created"] = cf.DateCreated
-			}
-		}
-	}
-
-	if cf.Id != old.(*KnownIps).Id {
-		diff["id"] = cf.Id
-	}
-
-	if cf.Ip != old.(*KnownIps).Ip {
-		diff["ip"] = cf.Ip
-	}
-
-	if cf.Location != old.(*KnownIps).Location {
-		diff["location"] = cf.Location
-	}
-
-	if len(diff) == 0 {
-		return nil
-	}
-	return diff
-}
-func (cf KnownIps) Map() map[string]interface{} {
-	mp := make(map[string]interface{})
-
-	mp["date_created"] = cf.DateCreated
-	mp["id"] = cf.Id
-	mp["ip"] = cf.Ip
-	mp["location"] = cf.Location
-
-	if len(mp) == 0 {
-		return nil
-	}
-	return mp
-}
-func (cf KnownIps) Track() []IDirectusObject {
-	trakingList := make([]IDirectusObject, 0)
-
-	if cf.SteamUsers != nil {
-		for _, iter := range cf.SteamUsers {
-			trakingList = append(trakingList, iter.Track()...)
-		}
-	}
-
-	return trakingList
-}
-func (cf KnownIps) GetId() string {
-	return cf.Id.String()
-}
-func (cf KnownIps) CollectionName() string {
-	return "KnownIps"
-}
-
-type PlayerBans struct {
-	IDirectusObject
-	BannedTill   time.Time                 `json:"banned_till"`
-	DateCreated  *time.Time                `json:"date_created"`
-	Files        []PlayerBansExternalFiles `json:"Files"`
-	Id           uuid.UUID                 `json:"id"`
-	Project      *GameProjects             `json:"project"`
-	ProjectBan   bool                      `json:"project_ban"`
-	Reason       *string                   `json:"reason"`
-	TargetIp     *KnownIps                 `json:"target_ip"`
-	TargetPlayer *ServerPlayers            `json:"target_player"`
-	TargetSteam  *SteamUsers               `json:"target_steam"`
-	Unbanned     bool                      `json:"unbanned"`
-	UserCreated  *DirectusUsers            `json:"user_created"`
-}
-
-func (cf *PlayerBans) UnmarshalJSON(data []byte) error {
-	type playerbans_internal struct {
-		BannedTill   time.Time                 `json:"banned_till"`
-		DateCreated  *time.Time                `json:"date_created"`
-		Files        []PlayerBansExternalFiles `json:"Files"`
-		Id           uuid.UUID                 `json:"id"`
-		Project      *GameProjects             `json:"project"`
-		ProjectBan   bool                      `json:"project_ban"`
-		Reason       *string                   `json:"reason"`
-		TargetIp     *KnownIps                 `json:"target_ip"`
-		TargetPlayer *ServerPlayers            `json:"target_player"`
-		TargetSteam  *SteamUsers               `json:"target_steam"`
-		Unbanned     bool                      `json:"unbanned"`
-		UserCreated  *DirectusUsers            `json:"user_created"`
-	}
-	if data[0] == '"' { //Data is a string
-		return json.Unmarshal(data, &cf.Id)
-	} else if data[0] == '{' { //Data is an object
-		var _obj playerbans_internal
-		err := json.Unmarshal(data, &_obj)
-		if err != nil {
-			return err
-		}
-		cf.BannedTill = _obj.BannedTill
-		cf.DateCreated = _obj.DateCreated
-		cf.Files = _obj.Files
-		cf.Id = _obj.Id
-		cf.Project = _obj.Project
-		cf.ProjectBan = _obj.ProjectBan
-		cf.Reason = _obj.Reason
-		cf.TargetIp = _obj.TargetIp
-		cf.TargetPlayer = _obj.TargetPlayer
-		cf.TargetSteam = _obj.TargetSteam
-		cf.Unbanned = _obj.Unbanned
-		cf.UserCreated = _obj.UserCreated
-	} else {
-		//Number or unkown, probably id
-		return json.Unmarshal(data, &cf.Id)
-	}
-	return nil
-}
-func (cf PlayerBans) DeepCopy() IDirectusObject {
-	new_obj := &PlayerBans{}
-	new_obj.BannedTill = cf.BannedTill
-	if cf.DateCreated != nil {
-		temp := time.Time{}
-		new_obj.DateCreated = &temp
-		*new_obj.DateCreated = *cf.DateCreated
-	}
-	if cf.Files != nil {
-		new_obj.Files = make([]PlayerBansExternalFiles, len(cf.Files))
-		copy(new_obj.Files, cf.Files)
-	}
-	new_obj.Id = cf.Id
-	if cf.Project != nil {
-		new_obj.Project = (*cf.Project).DeepCopy().(*GameProjects)
-	}
-	new_obj.ProjectBan = cf.ProjectBan
-	if cf.Reason != nil {
-		temp := ""
-		new_obj.Reason = &temp
-		*new_obj.Reason = *cf.Reason
-	}
-	if cf.TargetIp != nil {
-		new_obj.TargetIp = (*cf.TargetIp).DeepCopy().(*KnownIps)
-	}
-	if cf.TargetPlayer != nil {
-		new_obj.TargetPlayer = (*cf.TargetPlayer).DeepCopy().(*ServerPlayers)
-	}
-	if cf.TargetSteam != nil {
-		new_obj.TargetSteam = (*cf.TargetSteam).DeepCopy().(*SteamUsers)
-	}
-	new_obj.Unbanned = cf.Unbanned
-	if cf.UserCreated != nil {
-		new_obj.UserCreated = (*cf.UserCreated).DeepCopy().(*DirectusUsers)
-	}
-	return new_obj
-}
-func (cf PlayerBans) Diff(old IDirectusObject) map[string]interface{} {
-	diff := make(map[string]interface{})
-
-	if cf.BannedTill != old.(*PlayerBans).BannedTill {
-		diff["banned_till"] = cf.BannedTill
-	}
-	if cf.DateCreated == nil {
-		if old.(*PlayerBans).DateCreated != nil {
-			diff["date_created"] = nil
-		}
-	} else {
-		if old.(*PlayerBans).DateCreated == nil {
-			diff["date_created"] = cf.DateCreated
-		} else {
-			if *cf.DateCreated != *old.(*PlayerBans).DateCreated {
-				diff["date_created"] = cf.DateCreated
-			}
-		}
-	}
-
-	if cf.Id != old.(*PlayerBans).Id {
-		diff["id"] = cf.Id
-	}
-
-	if cf.ProjectBan != old.(*PlayerBans).ProjectBan {
-		diff["project_ban"] = cf.ProjectBan
-	}
-	if cf.Reason == nil {
-		if old.(*PlayerBans).Reason != nil {
-			diff["reason"] = nil
-		}
-	} else {
-		if old.(*PlayerBans).Reason == nil {
-			diff["reason"] = cf.Reason
-		} else {
-			if *cf.Reason != *old.(*PlayerBans).Reason {
-				diff["reason"] = cf.Reason
-			}
-		}
-	}
-
-	if cf.Unbanned != old.(*PlayerBans).Unbanned {
-		diff["unbanned"] = cf.Unbanned
-	}
-
-	if len(diff) == 0 {
-		return nil
-	}
-	return diff
-}
-func (cf PlayerBans) Map() map[string]interface{} {
-	mp := make(map[string]interface{})
-
-	mp["banned_till"] = cf.BannedTill
-	mp["date_created"] = cf.DateCreated
-
-	mp["id"] = cf.Id
-
-	mp["project_ban"] = cf.ProjectBan
-	mp["reason"] = cf.Reason
-
-	mp["unbanned"] = cf.Unbanned
-
-	if len(mp) == 0 {
-		return nil
-	}
-	return mp
-}
-func (cf PlayerBans) Track() []IDirectusObject {
-	trakingList := make([]IDirectusObject, 0)
-
-	if cf.Files != nil {
-		for _, iter := range cf.Files {
-			trakingList = append(trakingList, iter.Track()...)
-		}
-	}
-
-	if cf.Project != nil {
-		trakingList = append(trakingList, cf.Project)
-		trakingList = append(trakingList, cf.Project.Track()...)
-	}
-
-	if cf.TargetIp != nil {
-		trakingList = append(trakingList, cf.TargetIp)
-		trakingList = append(trakingList, cf.TargetIp.Track()...)
-	}
-	if cf.TargetPlayer != nil {
-		trakingList = append(trakingList, cf.TargetPlayer)
-		trakingList = append(trakingList, cf.TargetPlayer.Track()...)
-	}
-	if cf.TargetSteam != nil {
-		trakingList = append(trakingList, cf.TargetSteam)
-		trakingList = append(trakingList, cf.TargetSteam.Track()...)
-	}
-
-	if cf.UserCreated != nil {
-		trakingList = append(trakingList, cf.UserCreated)
-		trakingList = append(trakingList, cf.UserCreated.Track()...)
-	}
-	return trakingList
-}
-func (cf PlayerBans) GetId() string {
-	return cf.Id.String()
-}
-func (cf PlayerBans) CollectionName() string {
-	return "PlayerBans"
-}
-
-type PlayerBansExternalFiles struct {
-	IDirectusObject
-	ExternalFilesId *ExternalFiles `json:"ExternalFiles_id"`
-	Id              int            `json:"id"`
-	PlayerBansId    *PlayerBans    `json:"PlayerBans_id"`
-}
-
-func (cf *PlayerBansExternalFiles) UnmarshalJSON(data []byte) error {
-	type playerbansexternalfiles_internal struct {
-		ExternalFilesId *ExternalFiles `json:"ExternalFiles_id"`
-		Id              int            `json:"id"`
-		PlayerBansId    *PlayerBans    `json:"PlayerBans_id"`
-	}
-	if data[0] == '"' { //Data is a string
-		return json.Unmarshal(data, &cf.Id)
-	} else if data[0] == '{' { //Data is an object
-		var _obj playerbansexternalfiles_internal
-		err := json.Unmarshal(data, &_obj)
-		if err != nil {
-			return err
-		}
-		cf.ExternalFilesId = _obj.ExternalFilesId
-		cf.Id = _obj.Id
-		cf.PlayerBansId = _obj.PlayerBansId
-	} else {
-		//Number or unkown, probably id
-		return json.Unmarshal(data, &cf.Id)
-	}
-	return nil
-}
-func (cf PlayerBansExternalFiles) DeepCopy() IDirectusObject {
-	new_obj := &PlayerBansExternalFiles{}
-	if cf.ExternalFilesId != nil {
-		new_obj.ExternalFilesId = (*cf.ExternalFilesId).DeepCopy().(*ExternalFiles)
-	}
-	new_obj.Id = cf.Id
-	if cf.PlayerBansId != nil {
-		new_obj.PlayerBansId = (*cf.PlayerBansId).DeepCopy().(*PlayerBans)
-	}
-	return new_obj
-}
-func (cf PlayerBansExternalFiles) Diff(old IDirectusObject) map[string]interface{} {
-	diff := make(map[string]interface{})
-
-	if cf.Id != old.(*PlayerBansExternalFiles).Id {
-		diff["id"] = cf.Id
-	}
-
-	if len(diff) == 0 {
-		return nil
-	}
-	return diff
-}
-func (cf PlayerBansExternalFiles) Map() map[string]interface{} {
-	mp := make(map[string]interface{})
-
-	mp["id"] = cf.Id
-
-	if len(mp) == 0 {
-		return nil
-	}
-	return mp
-}
-func (cf PlayerBansExternalFiles) Track() []IDirectusObject {
-	trakingList := make([]IDirectusObject, 0)
-
-	if cf.ExternalFilesId != nil {
-		trakingList = append(trakingList, cf.ExternalFilesId)
-		trakingList = append(trakingList, cf.ExternalFilesId.Track()...)
-	}
-
-	if cf.PlayerBansId != nil {
-		trakingList = append(trakingList, cf.PlayerBansId)
-		trakingList = append(trakingList, cf.PlayerBansId.Track()...)
-	}
-	return trakingList
-}
-func (cf PlayerBansExternalFiles) GetId() string {
-	return fmt.Sprintf("%d", cf.Id)
-}
-func (cf PlayerBansExternalFiles) CollectionName() string {
-	return "PlayerBans_ExternalFiles"
-}
-
-type PlayerChecks struct {
+type Transaction struct {
 	IDirectusObject
 	DateCreated *time.Time     `json:"date_created"`
+	DateUpdated *time.Time     `json:"date_updated"`
 	Id          uuid.UUID      `json:"id"`
-	Inspector   *DirectusUsers `json:"inspector"`
-	Target      *ServerPlayers `json:"target"`
+	Metadata    any            `json:"metadata"`
 	UserCreated *DirectusUsers `json:"user_created"`
+	UserUpdated *DirectusUsers `json:"user_updated"`
 }
 
-func (cf *PlayerChecks) UnmarshalJSON(data []byte) error {
-	type playerchecks_internal struct {
+func (cf *Transaction) UnmarshalJSON(data []byte) error {
+	type transaction_internal struct {
 		DateCreated *time.Time     `json:"date_created"`
+		DateUpdated *time.Time     `json:"date_updated"`
 		Id          uuid.UUID      `json:"id"`
-		Inspector   *DirectusUsers `json:"inspector"`
-		Target      *ServerPlayers `json:"target"`
+		Metadata    any            `json:"metadata"`
 		UserCreated *DirectusUsers `json:"user_created"`
+		UserUpdated *DirectusUsers `json:"user_updated"`
 	}
 	if data[0] == '"' { //Data is a string
 		return json.Unmarshal(data, &cf.Id)
 	} else if data[0] == '{' { //Data is an object
-		var _obj playerchecks_internal
+		var _obj transaction_internal
 		err := json.Unmarshal(data, &_obj)
 		if err != nil {
 			return err
 		}
-		cf.DateCreated = _obj.DateCreated
-		cf.Id = _obj.Id
-		cf.Inspector = _obj.Inspector
-		cf.Target = _obj.Target
-		cf.UserCreated = _obj.UserCreated
-	} else {
-		//Number or unkown, probably id
-		return json.Unmarshal(data, &cf.Id)
-	}
-	return nil
-}
-func (cf PlayerChecks) DeepCopy() IDirectusObject {
-	new_obj := &PlayerChecks{}
-	if cf.DateCreated != nil {
-		temp := time.Time{}
-		new_obj.DateCreated = &temp
-		*new_obj.DateCreated = *cf.DateCreated
-	}
-	new_obj.Id = cf.Id
-	if cf.Inspector != nil {
-		new_obj.Inspector = (*cf.Inspector).DeepCopy().(*DirectusUsers)
-	}
-	if cf.Target != nil {
-		new_obj.Target = (*cf.Target).DeepCopy().(*ServerPlayers)
-	}
-	if cf.UserCreated != nil {
-		new_obj.UserCreated = (*cf.UserCreated).DeepCopy().(*DirectusUsers)
-	}
-	return new_obj
-}
-func (cf PlayerChecks) Diff(old IDirectusObject) map[string]interface{} {
-	diff := make(map[string]interface{})
-
-	if cf.DateCreated == nil {
-		if old.(*PlayerChecks).DateCreated != nil {
-			diff["date_created"] = nil
-		}
-	} else {
-		if old.(*PlayerChecks).DateCreated == nil {
-			diff["date_created"] = cf.DateCreated
-		} else {
-			if *cf.DateCreated != *old.(*PlayerChecks).DateCreated {
-				diff["date_created"] = cf.DateCreated
-			}
-		}
-	}
-
-	if cf.Id != old.(*PlayerChecks).Id {
-		diff["id"] = cf.Id
-	}
-
-	if len(diff) == 0 {
-		return nil
-	}
-	return diff
-}
-func (cf PlayerChecks) Map() map[string]interface{} {
-	mp := make(map[string]interface{})
-
-	mp["date_created"] = cf.DateCreated
-	mp["id"] = cf.Id
-
-	if len(mp) == 0 {
-		return nil
-	}
-	return mp
-}
-func (cf PlayerChecks) Track() []IDirectusObject {
-	trakingList := make([]IDirectusObject, 0)
-
-	if cf.Inspector != nil {
-		trakingList = append(trakingList, cf.Inspector)
-		trakingList = append(trakingList, cf.Inspector.Track()...)
-	}
-	if cf.Target != nil {
-		trakingList = append(trakingList, cf.Target)
-		trakingList = append(trakingList, cf.Target.Track()...)
-	}
-	if cf.UserCreated != nil {
-		trakingList = append(trakingList, cf.UserCreated)
-		trakingList = append(trakingList, cf.UserCreated.Track()...)
-	}
-	return trakingList
-}
-func (cf PlayerChecks) GetId() string {
-	return cf.Id.String()
-}
-func (cf PlayerChecks) CollectionName() string {
-	return "PlayerChecks"
-}
-
-type PlayerEvents struct {
-	IDirectusObject
-	DateCreated *time.Time     `json:"date_created"`
-	Event       any            `json:"event"`
-	Id          uuid.UUID      `json:"id"`
-	Player      *ServerPlayers `json:"player"`
-}
-
-func (cf *PlayerEvents) UnmarshalJSON(data []byte) error {
-	type playerevents_internal struct {
-		DateCreated *time.Time     `json:"date_created"`
-		Event       any            `json:"event"`
-		Id          uuid.UUID      `json:"id"`
-		Player      *ServerPlayers `json:"player"`
-	}
-	if data[0] == '"' { //Data is a string
-		return json.Unmarshal(data, &cf.Id)
-	} else if data[0] == '{' { //Data is an object
-		var _obj playerevents_internal
-		err := json.Unmarshal(data, &_obj)
-		if err != nil {
-			return err
-		}
-		cf.DateCreated = _obj.DateCreated
-		cf.Event = _obj.Event
-		cf.Id = _obj.Id
-		cf.Player = _obj.Player
-	} else {
-		//Number or unkown, probably id
-		return json.Unmarshal(data, &cf.Id)
-	}
-	return nil
-}
-func (cf PlayerEvents) DeepCopy() IDirectusObject {
-	new_obj := &PlayerEvents{}
-	if cf.DateCreated != nil {
-		temp := time.Time{}
-		new_obj.DateCreated = &temp
-		*new_obj.DateCreated = *cf.DateCreated
-	}
-	new_obj.Event = cf.Event
-	new_obj.Id = cf.Id
-	if cf.Player != nil {
-		new_obj.Player = (*cf.Player).DeepCopy().(*ServerPlayers)
-	}
-	return new_obj
-}
-func (cf PlayerEvents) Diff(old IDirectusObject) map[string]interface{} {
-	diff := make(map[string]interface{})
-
-	if cf.DateCreated == nil {
-		if old.(*PlayerEvents).DateCreated != nil {
-			diff["date_created"] = nil
-		}
-	} else {
-		if old.(*PlayerEvents).DateCreated == nil {
-			diff["date_created"] = cf.DateCreated
-		} else {
-			if *cf.DateCreated != *old.(*PlayerEvents).DateCreated {
-				diff["date_created"] = cf.DateCreated
-			}
-		}
-	}
-
-	if cf.Event != old.(*PlayerEvents).Event {
-		diff["event"] = cf.Event
-	}
-
-	if cf.Id != old.(*PlayerEvents).Id {
-		diff["id"] = cf.Id
-	}
-
-	if len(diff) == 0 {
-		return nil
-	}
-	return diff
-}
-func (cf PlayerEvents) Map() map[string]interface{} {
-	mp := make(map[string]interface{})
-
-	mp["date_created"] = cf.DateCreated
-	mp["event"] = cf.Event
-	mp["id"] = cf.Id
-
-	if len(mp) == 0 {
-		return nil
-	}
-	return mp
-}
-func (cf PlayerEvents) Track() []IDirectusObject {
-	trakingList := make([]IDirectusObject, 0)
-
-	if cf.Player != nil {
-		trakingList = append(trakingList, cf.Player)
-		trakingList = append(trakingList, cf.Player.Track()...)
-	}
-	return trakingList
-}
-func (cf PlayerEvents) GetId() string {
-	return cf.Id.String()
-}
-func (cf PlayerEvents) CollectionName() string {
-	return "PlayerEvents"
-}
-
-type PlayerReports struct {
-	IDirectusObject
-	DateCreated *time.Time     `json:"date_created"`
-	Id          uuid.UUID      `json:"id"`
-	Reason      *string        `json:"reason"`
-	Reporter    *ServerPlayers `json:"reporter"`
-	Target      *ServerPlayers `json:"target"`
-}
-
-func (cf *PlayerReports) UnmarshalJSON(data []byte) error {
-	type playerreports_internal struct {
-		DateCreated *time.Time     `json:"date_created"`
-		Id          uuid.UUID      `json:"id"`
-		Reason      *string        `json:"reason"`
-		Reporter    *ServerPlayers `json:"reporter"`
-		Target      *ServerPlayers `json:"target"`
-	}
-	if data[0] == '"' { //Data is a string
-		return json.Unmarshal(data, &cf.Id)
-	} else if data[0] == '{' { //Data is an object
-		var _obj playerreports_internal
-		err := json.Unmarshal(data, &_obj)
-		if err != nil {
-			return err
-		}
-		cf.DateCreated = _obj.DateCreated
-		cf.Id = _obj.Id
-		cf.Reason = _obj.Reason
-		cf.Reporter = _obj.Reporter
-		cf.Target = _obj.Target
-	} else {
-		//Number or unkown, probably id
-		return json.Unmarshal(data, &cf.Id)
-	}
-	return nil
-}
-func (cf PlayerReports) DeepCopy() IDirectusObject {
-	new_obj := &PlayerReports{}
-	if cf.DateCreated != nil {
-		temp := time.Time{}
-		new_obj.DateCreated = &temp
-		*new_obj.DateCreated = *cf.DateCreated
-	}
-	new_obj.Id = cf.Id
-	if cf.Reason != nil {
-		temp := ""
-		new_obj.Reason = &temp
-		*new_obj.Reason = *cf.Reason
-	}
-	if cf.Reporter != nil {
-		new_obj.Reporter = (*cf.Reporter).DeepCopy().(*ServerPlayers)
-	}
-	if cf.Target != nil {
-		new_obj.Target = (*cf.Target).DeepCopy().(*ServerPlayers)
-	}
-	return new_obj
-}
-func (cf PlayerReports) Diff(old IDirectusObject) map[string]interface{} {
-	diff := make(map[string]interface{})
-
-	if cf.DateCreated == nil {
-		if old.(*PlayerReports).DateCreated != nil {
-			diff["date_created"] = nil
-		}
-	} else {
-		if old.(*PlayerReports).DateCreated == nil {
-			diff["date_created"] = cf.DateCreated
-		} else {
-			if *cf.DateCreated != *old.(*PlayerReports).DateCreated {
-				diff["date_created"] = cf.DateCreated
-			}
-		}
-	}
-
-	if cf.Id != old.(*PlayerReports).Id {
-		diff["id"] = cf.Id
-	}
-	if cf.Reason == nil {
-		if old.(*PlayerReports).Reason != nil {
-			diff["reason"] = nil
-		}
-	} else {
-		if old.(*PlayerReports).Reason == nil {
-			diff["reason"] = cf.Reason
-		} else {
-			if *cf.Reason != *old.(*PlayerReports).Reason {
-				diff["reason"] = cf.Reason
-			}
-		}
-	}
-
-	if len(diff) == 0 {
-		return nil
-	}
-	return diff
-}
-func (cf PlayerReports) Map() map[string]interface{} {
-	mp := make(map[string]interface{})
-
-	mp["date_created"] = cf.DateCreated
-	mp["id"] = cf.Id
-	mp["reason"] = cf.Reason
-
-	if len(mp) == 0 {
-		return nil
-	}
-	return mp
-}
-func (cf PlayerReports) Track() []IDirectusObject {
-	trakingList := make([]IDirectusObject, 0)
-
-	if cf.Reporter != nil {
-		trakingList = append(trakingList, cf.Reporter)
-		trakingList = append(trakingList, cf.Reporter.Track()...)
-	}
-	if cf.Target != nil {
-		trakingList = append(trakingList, cf.Target)
-		trakingList = append(trakingList, cf.Target.Track()...)
-	}
-	return trakingList
-}
-func (cf PlayerReports) GetId() string {
-	return cf.Id.String()
-}
-func (cf PlayerReports) CollectionName() string {
-	return "PlayerReports"
-}
-
-type ServerChatMessages struct {
-	IDirectusObject
-	Content     string         `json:"content"`
-	DateCreated *time.Time     `json:"date_created"`
-	Id          uuid.UUID      `json:"id"`
-	Prefix      *string        `json:"prefix"`
-	Sender      *ServerPlayers `json:"sender"`
-	Server      *GameServers   `json:"server"`
-}
-
-func (cf *ServerChatMessages) UnmarshalJSON(data []byte) error {
-	type serverchatmessages_internal struct {
-		Content     string         `json:"content"`
-		DateCreated *time.Time     `json:"date_created"`
-		Id          uuid.UUID      `json:"id"`
-		Prefix      *string        `json:"prefix"`
-		Sender      *ServerPlayers `json:"sender"`
-		Server      *GameServers   `json:"server"`
-	}
-	if data[0] == '"' { //Data is a string
-		return json.Unmarshal(data, &cf.Id)
-	} else if data[0] == '{' { //Data is an object
-		var _obj serverchatmessages_internal
-		err := json.Unmarshal(data, &_obj)
-		if err != nil {
-			return err
-		}
-		cf.Content = _obj.Content
-		cf.DateCreated = _obj.DateCreated
-		cf.Id = _obj.Id
-		cf.Prefix = _obj.Prefix
-		cf.Sender = _obj.Sender
-		cf.Server = _obj.Server
-	} else {
-		//Number or unkown, probably id
-		return json.Unmarshal(data, &cf.Id)
-	}
-	return nil
-}
-func (cf ServerChatMessages) DeepCopy() IDirectusObject {
-	new_obj := &ServerChatMessages{}
-	new_obj.Content = cf.Content
-	if cf.DateCreated != nil {
-		temp := time.Time{}
-		new_obj.DateCreated = &temp
-		*new_obj.DateCreated = *cf.DateCreated
-	}
-	new_obj.Id = cf.Id
-	if cf.Prefix != nil {
-		temp := ""
-		new_obj.Prefix = &temp
-		*new_obj.Prefix = *cf.Prefix
-	}
-	if cf.Sender != nil {
-		new_obj.Sender = (*cf.Sender).DeepCopy().(*ServerPlayers)
-	}
-	if cf.Server != nil {
-		new_obj.Server = (*cf.Server).DeepCopy().(*GameServers)
-	}
-	return new_obj
-}
-func (cf ServerChatMessages) Diff(old IDirectusObject) map[string]interface{} {
-	diff := make(map[string]interface{})
-
-	if cf.Content != old.(*ServerChatMessages).Content {
-		diff["content"] = cf.Content
-	}
-	if cf.DateCreated == nil {
-		if old.(*ServerChatMessages).DateCreated != nil {
-			diff["date_created"] = nil
-		}
-	} else {
-		if old.(*ServerChatMessages).DateCreated == nil {
-			diff["date_created"] = cf.DateCreated
-		} else {
-			if *cf.DateCreated != *old.(*ServerChatMessages).DateCreated {
-				diff["date_created"] = cf.DateCreated
-			}
-		}
-	}
-
-	if cf.Id != old.(*ServerChatMessages).Id {
-		diff["id"] = cf.Id
-	}
-	if cf.Prefix == nil {
-		if old.(*ServerChatMessages).Prefix != nil {
-			diff["prefix"] = nil
-		}
-	} else {
-		if old.(*ServerChatMessages).Prefix == nil {
-			diff["prefix"] = cf.Prefix
-		} else {
-			if *cf.Prefix != *old.(*ServerChatMessages).Prefix {
-				diff["prefix"] = cf.Prefix
-			}
-		}
-	}
-
-	if len(diff) == 0 {
-		return nil
-	}
-	return diff
-}
-func (cf ServerChatMessages) Map() map[string]interface{} {
-	mp := make(map[string]interface{})
-
-	mp["content"] = cf.Content
-	mp["date_created"] = cf.DateCreated
-	mp["id"] = cf.Id
-	mp["prefix"] = cf.Prefix
-
-	if len(mp) == 0 {
-		return nil
-	}
-	return mp
-}
-func (cf ServerChatMessages) Track() []IDirectusObject {
-	trakingList := make([]IDirectusObject, 0)
-
-	if cf.Sender != nil {
-		trakingList = append(trakingList, cf.Sender)
-		trakingList = append(trakingList, cf.Sender.Track()...)
-	}
-	if cf.Server != nil {
-		trakingList = append(trakingList, cf.Server)
-		trakingList = append(trakingList, cf.Server.Track()...)
-	}
-	return trakingList
-}
-func (cf ServerChatMessages) GetId() string {
-	return cf.Id.String()
-}
-func (cf ServerChatMessages) CollectionName() string {
-	return "ServerChatMessages"
-}
-
-type ServerPlayers struct {
-	IDirectusObject
-	DateCreated        *time.Time           `json:"date_created"`
-	Id                 uuid.UUID            `json:"id"`
-	Online             bool                 `json:"online"`
-	PlayerChecks       []PlayerChecks       `json:"PlayerChecks"`
-	PlayerEvents       []PlayerEvents       `json:"PlayerEvents"`
-	Reports            []PlayerReports      `json:"reports"`
-	SentReports        []PlayerReports      `json:"sent_reports"`
-	Server             *GameServers         `json:"server"`
-	ServerChatMessages []ServerChatMessages `json:"ServerChatMessages"`
-	Steamuser          *SteamUsers          `json:"steamuser"`
-}
-
-func (cf *ServerPlayers) UnmarshalJSON(data []byte) error {
-	type serverplayers_internal struct {
-		DateCreated        *time.Time           `json:"date_created"`
-		Id                 uuid.UUID            `json:"id"`
-		Online             bool                 `json:"online"`
-		PlayerChecks       []PlayerChecks       `json:"PlayerChecks"`
-		PlayerEvents       []PlayerEvents       `json:"PlayerEvents"`
-		Reports            []PlayerReports      `json:"reports"`
-		SentReports        []PlayerReports      `json:"sent_reports"`
-		Server             *GameServers         `json:"server"`
-		ServerChatMessages []ServerChatMessages `json:"ServerChatMessages"`
-		Steamuser          *SteamUsers          `json:"steamuser"`
-	}
-	if data[0] == '"' { //Data is a string
-		return json.Unmarshal(data, &cf.Id)
-	} else if data[0] == '{' { //Data is an object
-		var _obj serverplayers_internal
-		err := json.Unmarshal(data, &_obj)
-		if err != nil {
-			return err
-		}
-		cf.DateCreated = _obj.DateCreated
-		cf.Id = _obj.Id
-		cf.Online = _obj.Online
-		cf.PlayerChecks = _obj.PlayerChecks
-		cf.PlayerEvents = _obj.PlayerEvents
-		cf.Reports = _obj.Reports
-		cf.SentReports = _obj.SentReports
-		cf.Server = _obj.Server
-		cf.ServerChatMessages = _obj.ServerChatMessages
-		cf.Steamuser = _obj.Steamuser
-	} else {
-		//Number or unkown, probably id
-		return json.Unmarshal(data, &cf.Id)
-	}
-	return nil
-}
-func (cf ServerPlayers) DeepCopy() IDirectusObject {
-	new_obj := &ServerPlayers{}
-	if cf.DateCreated != nil {
-		temp := time.Time{}
-		new_obj.DateCreated = &temp
-		*new_obj.DateCreated = *cf.DateCreated
-	}
-	new_obj.Id = cf.Id
-	new_obj.Online = cf.Online
-	if cf.PlayerChecks != nil {
-		new_obj.PlayerChecks = make([]PlayerChecks, len(cf.PlayerChecks))
-		copy(new_obj.PlayerChecks, cf.PlayerChecks)
-	}
-	if cf.PlayerEvents != nil {
-		new_obj.PlayerEvents = make([]PlayerEvents, len(cf.PlayerEvents))
-		copy(new_obj.PlayerEvents, cf.PlayerEvents)
-	}
-	if cf.Reports != nil {
-		new_obj.Reports = make([]PlayerReports, len(cf.Reports))
-		copy(new_obj.Reports, cf.Reports)
-	}
-	if cf.SentReports != nil {
-		new_obj.SentReports = make([]PlayerReports, len(cf.SentReports))
-		copy(new_obj.SentReports, cf.SentReports)
-	}
-	if cf.Server != nil {
-		new_obj.Server = (*cf.Server).DeepCopy().(*GameServers)
-	}
-	if cf.ServerChatMessages != nil {
-		new_obj.ServerChatMessages = make([]ServerChatMessages, len(cf.ServerChatMessages))
-		copy(new_obj.ServerChatMessages, cf.ServerChatMessages)
-	}
-	if cf.Steamuser != nil {
-		new_obj.Steamuser = (*cf.Steamuser).DeepCopy().(*SteamUsers)
-	}
-	return new_obj
-}
-func (cf ServerPlayers) Diff(old IDirectusObject) map[string]interface{} {
-	diff := make(map[string]interface{})
-
-	if cf.DateCreated == nil {
-		if old.(*ServerPlayers).DateCreated != nil {
-			diff["date_created"] = nil
-		}
-	} else {
-		if old.(*ServerPlayers).DateCreated == nil {
-			diff["date_created"] = cf.DateCreated
-		} else {
-			if *cf.DateCreated != *old.(*ServerPlayers).DateCreated {
-				diff["date_created"] = cf.DateCreated
-			}
-		}
-	}
-
-	if cf.Id != old.(*ServerPlayers).Id {
-		diff["id"] = cf.Id
-	}
-
-	if cf.Online != old.(*ServerPlayers).Online {
-		diff["online"] = cf.Online
-	}
-
-	if len(diff) == 0 {
-		return nil
-	}
-	return diff
-}
-func (cf ServerPlayers) Map() map[string]interface{} {
-	mp := make(map[string]interface{})
-
-	mp["date_created"] = cf.DateCreated
-	mp["id"] = cf.Id
-	mp["online"] = cf.Online
-
-	if len(mp) == 0 {
-		return nil
-	}
-	return mp
-}
-func (cf ServerPlayers) Track() []IDirectusObject {
-	trakingList := make([]IDirectusObject, 0)
-
-	if cf.PlayerChecks != nil {
-		for _, iter := range cf.PlayerChecks {
-			trakingList = append(trakingList, iter.Track()...)
-		}
-	}
-
-	if cf.PlayerEvents != nil {
-		for _, iter := range cf.PlayerEvents {
-			trakingList = append(trakingList, iter.Track()...)
-		}
-	}
-
-	if cf.Reports != nil {
-		for _, iter := range cf.Reports {
-			trakingList = append(trakingList, iter.Track()...)
-		}
-	}
-
-	if cf.SentReports != nil {
-		for _, iter := range cf.SentReports {
-			trakingList = append(trakingList, iter.Track()...)
-		}
-	}
-
-	if cf.Server != nil {
-		trakingList = append(trakingList, cf.Server)
-		trakingList = append(trakingList, cf.Server.Track()...)
-	}
-	if cf.ServerChatMessages != nil {
-		for _, iter := range cf.ServerChatMessages {
-			trakingList = append(trakingList, iter.Track()...)
-		}
-	}
-
-	if cf.Steamuser != nil {
-		trakingList = append(trakingList, cf.Steamuser)
-		trakingList = append(trakingList, cf.Steamuser.Track()...)
-	}
-	return trakingList
-}
-func (cf ServerPlayers) GetId() string {
-	return cf.Id.String()
-}
-func (cf ServerPlayers) CollectionName() string {
-	return "ServerPlayers"
-}
-
-type SteamUsers struct {
-	IDirectusObject
-	Avatar        *ExternalFiles  `json:"avatar"`
-	DateCreated   *time.Time      `json:"date_created"`
-	DateUpdated   *time.Time      `json:"date_updated"`
-	Id            uuid.UUID       `json:"id"`
-	Ip            *KnownIps       `json:"ip"`
-	Nickname      string          `json:"nickname"`
-	ServerPlayers []ServerPlayers `json:"ServerPlayers"`
-	Steamid       string          `json:"steamid"`
-	UserCreated   *DirectusUsers  `json:"user_created"`
-}
-
-func (cf *SteamUsers) UnmarshalJSON(data []byte) error {
-	type steamusers_internal struct {
-		Avatar        *ExternalFiles  `json:"avatar"`
-		DateCreated   *time.Time      `json:"date_created"`
-		DateUpdated   *time.Time      `json:"date_updated"`
-		Id            uuid.UUID       `json:"id"`
-		Ip            *KnownIps       `json:"ip"`
-		Nickname      string          `json:"nickname"`
-		ServerPlayers []ServerPlayers `json:"ServerPlayers"`
-		Steamid       string          `json:"steamid"`
-		UserCreated   *DirectusUsers  `json:"user_created"`
-	}
-	if data[0] == '"' { //Data is a string
-		return json.Unmarshal(data, &cf.Id)
-	} else if data[0] == '{' { //Data is an object
-		var _obj steamusers_internal
-		err := json.Unmarshal(data, &_obj)
-		if err != nil {
-			return err
-		}
-		cf.Avatar = _obj.Avatar
 		cf.DateCreated = _obj.DateCreated
 		cf.DateUpdated = _obj.DateUpdated
 		cf.Id = _obj.Id
-		cf.Ip = _obj.Ip
-		cf.Nickname = _obj.Nickname
-		cf.ServerPlayers = _obj.ServerPlayers
-		cf.Steamid = _obj.Steamid
+		cf.Metadata = _obj.Metadata
 		cf.UserCreated = _obj.UserCreated
+		cf.UserUpdated = _obj.UserUpdated
 	} else {
 		//Number or unkown, probably id
 		return json.Unmarshal(data, &cf.Id)
 	}
 	return nil
 }
-func (cf SteamUsers) DeepCopy() IDirectusObject {
-	new_obj := &SteamUsers{}
-	if cf.Avatar != nil {
-		new_obj.Avatar = (*cf.Avatar).DeepCopy().(*ExternalFiles)
-	}
+func (cf Transaction) DeepCopy() IDirectusObject {
+	new_obj := &Transaction{}
 	if cf.DateCreated != nil {
 		temp := time.Time{}
 		new_obj.DateCreated = &temp
@@ -6682,60 +5792,51 @@ func (cf SteamUsers) DeepCopy() IDirectusObject {
 		*new_obj.DateUpdated = *cf.DateUpdated
 	}
 	new_obj.Id = cf.Id
-	if cf.Ip != nil {
-		new_obj.Ip = (*cf.Ip).DeepCopy().(*KnownIps)
-	}
-	new_obj.Nickname = cf.Nickname
-	if cf.ServerPlayers != nil {
-		new_obj.ServerPlayers = make([]ServerPlayers, len(cf.ServerPlayers))
-		copy(new_obj.ServerPlayers, cf.ServerPlayers)
-	}
-	new_obj.Steamid = cf.Steamid
+	new_obj.Metadata = cf.Metadata
 	if cf.UserCreated != nil {
 		new_obj.UserCreated = (*cf.UserCreated).DeepCopy().(*DirectusUsers)
 	}
+	if cf.UserUpdated != nil {
+		new_obj.UserUpdated = (*cf.UserUpdated).DeepCopy().(*DirectusUsers)
+	}
 	return new_obj
 }
-func (cf SteamUsers) Diff(old IDirectusObject) map[string]interface{} {
+func (cf Transaction) Diff(old IDirectusObject) map[string]interface{} {
 	diff := make(map[string]interface{})
 
 	if cf.DateCreated == nil {
-		if old.(*SteamUsers).DateCreated != nil {
+		if old.(*Transaction).DateCreated != nil {
 			diff["date_created"] = nil
 		}
 	} else {
-		if old.(*SteamUsers).DateCreated == nil {
+		if old.(*Transaction).DateCreated == nil {
 			diff["date_created"] = cf.DateCreated
 		} else {
-			if *cf.DateCreated != *old.(*SteamUsers).DateCreated {
+			if *cf.DateCreated != *old.(*Transaction).DateCreated {
 				diff["date_created"] = cf.DateCreated
 			}
 		}
 	}
 	if cf.DateUpdated == nil {
-		if old.(*SteamUsers).DateUpdated != nil {
+		if old.(*Transaction).DateUpdated != nil {
 			diff["date_updated"] = nil
 		}
 	} else {
-		if old.(*SteamUsers).DateUpdated == nil {
+		if old.(*Transaction).DateUpdated == nil {
 			diff["date_updated"] = cf.DateUpdated
 		} else {
-			if *cf.DateUpdated != *old.(*SteamUsers).DateUpdated {
+			if *cf.DateUpdated != *old.(*Transaction).DateUpdated {
 				diff["date_updated"] = cf.DateUpdated
 			}
 		}
 	}
 
-	if cf.Id != old.(*SteamUsers).Id {
+	if cf.Id != old.(*Transaction).Id {
 		diff["id"] = cf.Id
 	}
 
-	if cf.Nickname != old.(*SteamUsers).Nickname {
-		diff["nickname"] = cf.Nickname
-	}
-
-	if cf.Steamid != old.(*SteamUsers).Steamid {
-		diff["steamid"] = cf.Steamid
+	if cf.Metadata != old.(*Transaction).Metadata {
+		diff["metadata"] = cf.Metadata
 	}
 
 	if len(diff) == 0 {
@@ -6743,113 +5844,35 @@ func (cf SteamUsers) Diff(old IDirectusObject) map[string]interface{} {
 	}
 	return diff
 }
-func (cf SteamUsers) Map() map[string]interface{} {
+func (cf Transaction) Map() map[string]interface{} {
 	mp := make(map[string]interface{})
 
 	mp["date_created"] = cf.DateCreated
 	mp["date_updated"] = cf.DateUpdated
 	mp["id"] = cf.Id
-
-	mp["nickname"] = cf.Nickname
-
-	mp["steamid"] = cf.Steamid
+	mp["metadata"] = cf.Metadata
 
 	if len(mp) == 0 {
 		return nil
 	}
 	return mp
 }
-func (cf SteamUsers) Track() []IDirectusObject {
+func (cf Transaction) Track() []IDirectusObject {
 	trakingList := make([]IDirectusObject, 0)
-
-	if cf.Avatar != nil {
-		trakingList = append(trakingList, cf.Avatar)
-		trakingList = append(trakingList, cf.Avatar.Track()...)
-	}
-
-	if cf.Ip != nil {
-		trakingList = append(trakingList, cf.Ip)
-		trakingList = append(trakingList, cf.Ip.Track()...)
-	}
-
-	if cf.ServerPlayers != nil {
-		for _, iter := range cf.ServerPlayers {
-			trakingList = append(trakingList, iter.Track()...)
-		}
-	}
 
 	if cf.UserCreated != nil {
 		trakingList = append(trakingList, cf.UserCreated)
 		trakingList = append(trakingList, cf.UserCreated.Track()...)
 	}
+	if cf.UserUpdated != nil {
+		trakingList = append(trakingList, cf.UserUpdated)
+		trakingList = append(trakingList, cf.UserUpdated.Track()...)
+	}
 	return trakingList
 }
-func (cf SteamUsers) GetId() string {
+func (cf Transaction) GetId() string {
 	return cf.Id.String()
 }
-func (cf SteamUsers) CollectionName() string {
-	return "SteamUsers"
-}
-
-type Test struct {
-	IDirectusObject
-	Id uuid.UUID `json:"id"`
-}
-
-func (cf *Test) UnmarshalJSON(data []byte) error {
-	type test_internal struct {
-		Id uuid.UUID `json:"id"`
-	}
-	if data[0] == '"' { //Data is a string
-		return json.Unmarshal(data, &cf.Id)
-	} else if data[0] == '{' { //Data is an object
-		var _obj test_internal
-		err := json.Unmarshal(data, &_obj)
-		if err != nil {
-			return err
-		}
-		cf.Id = _obj.Id
-	} else {
-		//Number or unkown, probably id
-		return json.Unmarshal(data, &cf.Id)
-	}
-	return nil
-}
-func (cf Test) DeepCopy() IDirectusObject {
-	new_obj := &Test{}
-	new_obj.Id = cf.Id
-	return new_obj
-}
-func (cf Test) Diff(old IDirectusObject) map[string]interface{} {
-	diff := make(map[string]interface{})
-
-	if cf.Id != old.(*Test).Id {
-		diff["id"] = cf.Id
-	}
-
-	if len(diff) == 0 {
-		return nil
-	}
-	return diff
-}
-func (cf Test) Map() map[string]interface{} {
-	mp := make(map[string]interface{})
-
-	mp["id"] = cf.Id
-
-	if len(mp) == 0 {
-		return nil
-	}
-	return mp
-}
-func (cf Test) Track() []IDirectusObject {
-	trakingList := make([]IDirectusObject, 0)
-
-	return trakingList
-}
-func (cf Test) GetId() string {
-	return cf.Id.String()
-}
-func (cf Test) CollectionName() string {
-	return "test"
+func (cf Transaction) CollectionName() string {
+	return "transaction"
 }
